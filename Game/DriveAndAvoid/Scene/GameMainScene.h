@@ -32,5 +32,5 @@ private:
 	//ハイスコア読み込み処理
 	void ReadHighScore();
 	//当たり判定
-	bool IsHitCheck(Player* p, Enemy* e);
+	bool IsHitCheck(Player* p, Enemy* e,Player* p2);
 };

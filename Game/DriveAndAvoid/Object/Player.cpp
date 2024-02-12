@@ -2,6 +2,11 @@
 #include"../Utility/InputControl.h"
 #include"DxLib.h"
 
+
+#define e 0.800
+#define g 9.807
+#define y_max 2.000
+
 Player::Player() : is_active(false), image(NULL), location(0.0f), box_size(0.0f),
 angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr)
 {
@@ -217,4 +222,19 @@ void Player::Acceleration()
 	{
 		speed += 1.0f;
 	}
+}
+
+//
+void Player::direction(Vector2D xy)
+{
+	//中心とってからその中心のｘ
+	//相手のxが自分より小さくて、ｙが大きい場合
+	//ドロウサークルを表示してｘｙの場所がどこか調べてくれ
+	if (location.x > xy.x) {
+		if (location.y < xy.y)
+		{
+
+		}
+	}
+	
 }

@@ -3,6 +3,7 @@
 #include"DxLib.h"
 #include<math.h>
 
+
 int a=0;
 
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
@@ -57,6 +58,7 @@ void GameMainScene::Initialize()
 	player->Initialize(0);
 	player2->Initialize(1);
 
+
 	for (int i = 0; i < 10; i++)
 	{
 		enemy[i] = nullptr;
@@ -108,14 +110,21 @@ eSceneType GameMainScene::Update()
 			}
 
 			//当たり判定の確認
-			if (IsHitCheck(player,enemy[i]))
+			if (IsHitCheck(player,enemy[i],player2))
 			{
+
 				player -> SetActive(false);
-					player -> DecreaseHp(-50.0f);
-					enemy[i] -> Finalize();
-					delete enemy[i];
-					enemy[i] = nullptr;
+				player->direction(player2->GetLocation());
+				player2->direction(player->GetLocation());
+
+					//player -> DecreaseHp(-50.0f);
+					//enemy[i] -> Finalize();
+					//delete enemy[i];
+					//enemy[i] = nullptr;
 			}
+
+
+
 		}
 	}
 
@@ -147,6 +156,8 @@ void GameMainScene::Draw() const
 	player->Draw();
 	//PAD2プレイヤーの描画
 	player2->Draw();
+
+	
 
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);
@@ -259,7 +270,7 @@ void GameMainScene::ReadHighScore()
 }
 
 //当たり判定処理（プレイヤーと敵）
-bool GameMainScene::IsHitCheck(Player* p, Enemy* e)
+bool GameMainScene::IsHitCheck(Player* p, Enemy* e,Player* p2)
 {
 	//プレイヤーがバリアを貼っていたら、当たり判定を無視する
 	if (p->IsBarrier())
@@ -274,11 +285,14 @@ bool GameMainScene::IsHitCheck(Player* p, Enemy* e)
 	}
 
 	//位置情報の差分を取得
-	Vector2D diff_location = p->GetLocation() - e->GetLocation();
+	Vector2D diff_location = p->GetLocation() - p2->GetLocation();
 
 	//当たり判定サイズの大きさを取得
-	Vector2D box_ex = p->GetBoxSize() + e->GetBoxSize();
+	Vector2D box_ex = p->GetBoxSize() + p2->GetBoxSize();
 
 	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+
+
 }

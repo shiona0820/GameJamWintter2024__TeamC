@@ -3,6 +3,17 @@
 #include"../Utility/Vector2D.h"
 #include"Barrier.h"
 
+
+//プレイヤーがどこに当たったか？
+enum direction
+{
+	Lowerleft,//左下
+	Lowerright,//右下
+	Upperleft,//左上
+	Upperright,//右上
+
+};
+
 class Player
 {
 private:
@@ -17,6 +28,10 @@ private:
 	int barrier_count;   //バリアの枚数
 	Barrier* barrier;    //バリア
 	int playernum;//プレイヤーの番号
+
+	
+
+	float v0;//反発係数計算用
 
 public:
 	Player();
@@ -37,6 +52,8 @@ public:
 	float GetHp() const;            //体力取得
 	int GetBarriarCount() const;         //バリアの枚数取得
 	bool IsBarrier() const;         //バリア有効かを取得
+
+	void direction(Vector2D xy);			//どこに当たったか調べる
 		
 private:
 	void Movement();      //移動処理

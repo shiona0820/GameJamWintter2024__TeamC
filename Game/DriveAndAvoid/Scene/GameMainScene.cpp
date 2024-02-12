@@ -27,7 +27,7 @@ void GameMainScene::Initialize()
 	//画像の読み込み
 	back_ground = LoadGraph("Resource/images/back.bmp");
 	barrier_image = LoadGraph("Resource/images/barrier.png");
-	int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);
+	/*int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);*/
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -35,10 +35,10 @@ void GameMainScene::Initialize()
 		throw("Resource/images/back.bmpがありません?n");
 	}
 
-	if (result == -1)
+	/*if (result == -1)
 	{
 		throw("Resource/images/car.bmpがありません\n");
-	}
+	}*/
 
 	if (barrier_image == -1)
 	{
@@ -48,14 +48,21 @@ void GameMainScene::Initialize()
 	//オブジェクトの生成
 	player = new Player;
 	enemy = new Enemy* [10];
+	Pcar = new Policecar;
 
 	//オブジェクトの初期化
 	player->Initialize();
+	Pcar->Initialize();
 
 	for (int i = 0; i < 10; i++)
 	{
 		enemy[i] = nullptr;
 	}
+
+	//初期化
+	count = 0;
+	timer = 0;
+
 }
 
 //更新処理
@@ -64,11 +71,30 @@ eSceneType GameMainScene::Update()
 	//プレイヤーの更新
 	player->Update();
 
+	
+
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
 
 	//敵生成処理
-	if (mileage / 20 % 100 == 0)
+	//countが60行ったら、timerが１増えてパトカーのｙが１増える
+	
+	count++;
+	if (count > 60)
+	{
+		count = 0;
+		timer++;
+		Pcar->Update();
+	}
+	if (timer == 180)
+	{
+		timer = 0;
+	}
+
+	//MAX720を180秒でいく 720/180=4
+	
+
+	/*if (mileage / 20 % 100 == 0)
 	{
 		for (int i = 0; i < 10; i++)
 		{
@@ -80,35 +106,35 @@ eSceneType GameMainScene::Update()
 				break;
 			}
 		}
-	}
+	}*/
 
 	//敵の更新と当たり判定チェック
-	for (int i = 0; i < 10; i++)
-	{
-		if (enemy[i] != nullptr)
-		{
-			enemy[i]->Update(player->GetSpeed());
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	if (enemy[i] != nullptr)
+	//	{
+	//		enemy[i]->Update(player->GetSpeed());
 
-			//画面外に行ったら、敵を削除してスコア加算
-			if (enemy[i] -> GetLocation().y >= 640.0f)
-			{
-				enemy_count[enemy[i]->GetType()]++;
-				enemy[i]->Finalize();
-				delete enemy[i];
-				enemy[i] = nullptr;
-			}
+	//		//画面外に行ったら、敵を削除してスコア加算
+	//		if (enemy[i] -> GetLocation().y >= 640.0f)
+	//		{
+	//			enemy_count[enemy[i]->GetType()]++;
+	//			enemy[i]->Finalize();
+	//			delete enemy[i];
+	//			enemy[i] = nullptr;
+	//		}
 
-			//当たり判定の確認
-			if (IsHitCheck(player,enemy[i]))
-			{
-				player -> SetActive(false);
-					player -> DecreaseHp(-50.0f);
-					enemy[i] -> Finalize();
-					delete enemy[i];
-					enemy[i] = nullptr;
-			}
-		}
-	}
+	//		当たり判定の確認
+	//		if (IsHitCheck(player,enemy[i]))
+	//		{
+	//			player -> SetActive(false);
+	//				player -> DecreaseHp(-50.0f);
+	//				enemy[i] -> Finalize();
+	//				delete enemy[i];
+	//				enemy[i] = nullptr;
+	//		}
+	//	}
+	//}
 
 	//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 	if (player -> GetFuel() < 0.0f || player -> GetHp() < 0.0f)
@@ -137,6 +163,9 @@ void GameMainScene::Draw() const
 	//プレイヤーの描画
 	player->Draw();
 
+	//パトカーの描画
+	Pcar->Draw();
+
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);
 	SetFontSize(16);
@@ -154,6 +183,9 @@ void GameMainScene::Draw() const
 	DrawFormatString(555, 220, GetColor(255, 255, 255), "%08d", mileage / 10);
 	DrawFormatString(510, 240, GetColor(0, 0, 0), "スピード");
 	DrawFormatString(555, 260, GetColor(255, 255, 255), "%08.1f", player->GetSpeed());
+
+	DrawFormatString(200, 260, GetColor(255, 255, 255), "count%d", count);
+	DrawFormatString(200, 280, GetColor(255, 255, 255), "timer%d", timer);
 
 	//バリア枚数の描画
 	for (int i = 0; i < player -> GetBarriarCount(); i++)
@@ -213,6 +245,9 @@ void GameMainScene::Finalize()
 	//動的確保したオブジェクトを削除する
 	player->Finalize();
 	delete player;
+
+	Pcar->Finalize();
+	delete Pcar;
 
 	for (int i = 0; i < 10; i++)
 	{

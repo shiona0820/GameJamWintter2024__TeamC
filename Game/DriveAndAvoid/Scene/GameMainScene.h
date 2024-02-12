@@ -3,6 +3,8 @@
 #include"SceneBase.h"
 #include"../Object/Player.h"
 #include"../Object/Enemy.h"
+#include"../Object/Policecar.h"
+
 
 class GameMainScene : public SceneBase
 {
@@ -15,6 +17,9 @@ private:
 	int enemy_count[3]; //’Ê‚è‰ß‚¬‚½“GƒJƒEƒ“ƒg
 	Player* player;     //ƒvƒŒƒCƒ„[
 	Enemy** enemy;       //“G
+	Policecar* Pcar;     //ƒpƒgƒJ[
+	int count;          //‚U‚O‰ñ”‚¦‚é
+	int timer;          //count‚ª‚U‚O‚É‚È‚Á‚½‚ç‚P”‚¦‚é
 
 public:
 	GameMainScene();

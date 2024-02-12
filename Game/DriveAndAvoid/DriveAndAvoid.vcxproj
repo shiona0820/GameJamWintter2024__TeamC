@@ -136,6 +136,7 @@
     <ClCompile Include="Object\Enemy.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\RankingData.cpp" />
+    <ClCompile Include="Object\Policecar.cpp" />
     <ClCompile Include="Scene\GameMainScene.cpp" />
     <ClCompile Include="Scene\HelpScene.cpp" />
     <ClCompile Include="Scene\RankingDispScene.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Object\Enemy.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\RankingData.h" />
+    <ClInclude Include="Object\Policecar.h" />
     <ClInclude Include="Scene\GameMainScene.h" />
     <ClInclude Include="Scene\HelpScene.h" />
     <ClInclude Include="Scene\RankingDispScene.h" />

@@ -48,6 +48,7 @@ void GameMainScene::Initialize()
 	//オブジェクトの生成
 	player = new Player;
 	enemy = new Enemy* [10];
+	item = new Item;
 
 	//オブジェクトの初期化
 	player->Initialize();
@@ -63,6 +64,7 @@ eSceneType GameMainScene::Update()
 {
 	//プレイヤーの更新
 	player->Update();
+	item->Update();
 
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
@@ -136,6 +138,9 @@ void GameMainScene::Draw() const
 
 	//プレイヤーの描画
 	player->Draw();
+
+	//アイテムの描画
+	item->Draw();
 
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);

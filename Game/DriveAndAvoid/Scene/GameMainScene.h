@@ -14,6 +14,7 @@ private:
 	int enemy_image[3]; //敵画像
 	int enemy_count[3]; //通り過ぎた敵カウント
 	Player* player;     //プレイヤー
+	Player* player2;     //プレイヤー2
 	Enemy** enemy;       //敵
 
 public:

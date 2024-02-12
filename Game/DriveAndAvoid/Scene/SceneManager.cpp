@@ -30,6 +30,11 @@ void SceneManager::Initialize()
 		throw("ウィンドウモードで起動できませんでした\n");
 	}
 
+	//ウィンドウサイズ指定
+	//SetWindowSize(1280, 720);
+	SetGraphMode(1280, 720, 32);
+
+
 	//DXライブラリの初期化
 	if (DxLib_Init() == -1)
 	{
@@ -87,7 +92,7 @@ void SceneManager::Update()
 		}
 
 		//ESCAPEキーが押されたら、ゲームを終了する
-		if (CheckHitKey(KEY_INPUT_ESCAPE) || InputControl::GetButtonUp(XINPUT_BUTTON_BACK))
+		if (CheckHitKey(KEY_INPUT_ESCAPE))
 		{
 			break;
 		}

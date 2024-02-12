@@ -3,6 +3,8 @@
 #include"DxLib.h"
 #include<math.h>
 
+int a=0;
+
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
 barrier_image(NULL), mileage(0), player(nullptr), enemy(nullptr)
 {
@@ -47,10 +49,13 @@ void GameMainScene::Initialize()
 
 	//オブジェクトの生成
 	player = new Player;
+	player2 = new Player;
+
 	enemy = new Enemy* [10];
 
 	//オブジェクトの初期化
-	player->Initialize();
+	player->Initialize(0);
+	player2->Initialize(1);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -61,8 +66,12 @@ void GameMainScene::Initialize()
 //更新処理
 eSceneType GameMainScene::Update()
 {
+
+
 	//プレイヤーの更新
 	player->Update();
+	//プレイヤー２の更新
+	player2->Update();
 
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
@@ -136,13 +145,16 @@ void GameMainScene::Draw() const
 
 	//プレイヤーの描画
 	player->Draw();
+	//PAD2プレイヤーの描画
+	player2->Draw();
 
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);
 	SetFontSize(16);
 	DrawFormatString(510, 20, GetColor(0, 0, 0), "ハイスコア");
 	DrawFormatString(560, 40, GetColor(255, 255, 255), "%08d", high_score);
-	DrawFormatString(510, 80, GetColor(0, 0, 0), "避けた数");
+	//DrawFormatString(510, 80, GetColor(0, 0, 0), "避けた数");
+	DrawFormatString(510, 80, GetColor(0, 0, 0), "Pad%d",a);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -213,6 +225,9 @@ void GameMainScene::Finalize()
 	//動的確保したオブジェクトを削除する
 	player->Finalize();
 	delete player;
+	
+	player2->Finalize();
+	delete player2;
 
 	for (int i = 0; i < 10; i++)
 	{

@@ -16,12 +16,13 @@ private:
 	float fuel;          //燃料
 	int barrier_count;   //バリアの枚数
 	Barrier* barrier;    //バリア
+	int playernum;//プレイヤーの番号
 
 public:
 	Player();
 	~Player();
 
-	void Initialize();        //初期化処理
+	void Initialize(int pnum);        //初期化処理
 	void Update();            //更新処理
 	void Draw();              //描画処理
 	void Finalize();          //終了時処理

@@ -14,7 +14,7 @@ Player::~Player()
 }
 
 //初期化処理
-void Player::Initialize()
+void Player::Initialize(int pnum)
 {
 	is_active = true;
 	location = Vector2D(320.0f, 380.0f);
@@ -24,6 +24,7 @@ void Player::Initialize()
 	hp = 1000;
 	fuel = 20000;
 	barrier_count = 3;
+	playernum = pnum;
 
 	//画像の読み込み
 	image = LoadGraph("Resource/images/car1pol.bmp");
@@ -59,13 +60,13 @@ void Player::Update()
 	//加減速処理
 	Acceleration();
 
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_START))
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_START,playernum))
 	{
 		is_active = false;
 	}
 
 	//バリア処理
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_B) && barrier_count > 0)
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_B,playernum) && barrier_count > 0)
 	{
 		if (barrier == nullptr)
 		{
@@ -173,21 +174,21 @@ void Player::Movement()
 	angle = 0.0f;
 
 	//十字移動処理
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT))
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_LEFT,playernum))
 	{
 		move += Vector2D(-1.0f, 0.0f);
 			angle = -DX_PI_F / 18;
 	}
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT))
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_RIGHT, playernum))
 	{
 		move += Vector2D(1.0f, 0.0f);
 		angle = DX_PI_F / 18;
 	}
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_UP))
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_UP, playernum))
 	{
 		move += Vector2D(0.0f, -1.0f);
 	}
-	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_DOWN))
+	if (InputControl::GetButton(XINPUT_BUTTON_DPAD_DOWN, playernum))
 	{
 		move += Vector2D(0.0f, 1.0f);
 	}
@@ -206,13 +207,13 @@ void Player::Movement()
 void Player::Acceleration()
 {
 	//LBボタンが押されたら、減速する
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_LEFT_SHOULDER) && speed > 1.0f)
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_LEFT_SHOULDER, playernum) && speed > 1.0f)
 	{
 		speed -= 1.0f;
 	}
 
 	//RBボタンが押されたら、加速する
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_RIGHT_SHOULDER) && speed < 10.0f)
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_RIGHT_SHOULDER, playernum) && speed < 10.0f)
 	{
 		speed += 1.0f;
 	}

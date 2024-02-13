@@ -25,8 +25,8 @@ void Player::Initialize()
 	fuel = 20000;
 	barrier_count = 3;
 
-	//画像の読み込み
-	image = LoadGraph("Resource/images/car1pol.bmp");
+	//画像の読み込み.....仮で自身の画像変更済み
+	image = LoadGraph("Resource/images/gentuki.bmp");
 
 	//エラーチェック
 	if (image == -1)

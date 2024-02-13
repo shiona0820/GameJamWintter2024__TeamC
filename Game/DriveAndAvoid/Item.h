@@ -26,4 +26,5 @@ public:
 		int speed;
 	};
 	struct CONE cone[3];
+
 };

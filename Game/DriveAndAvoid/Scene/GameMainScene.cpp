@@ -4,10 +4,11 @@
 #include<math.h>
 
 
-int a=0;
+Vector2D a;
+Vector2D b;
 
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
-barrier_image(NULL), mileage(0), player(nullptr), enemy(nullptr),time(0),flg(false)
+barrier_image(NULL), mileage(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -55,8 +56,8 @@ void GameMainScene::Initialize()
 	enemy = new Enemy* [10];
 
 	//オブジェクトの初期化
-	player->Initialize(0);
-	player2->Initialize(1);
+	player->Initialize(0,400);
+	player2->Initialize(1,200);
 
 
 	for (int i = 0; i < 10; i++)
@@ -110,21 +111,29 @@ eSceneType GameMainScene::Update()
 			}
 
 
+
+
 			//当たり判定の確認
 			if (IsHitCheck(player,enemy[i],player2))
 			{
 
 				if (flg == false)
 				{
-					time = GetNowCount();
 					flg = true;
 				}
 
-				player->Repulsion(time);
-				//player -> SetActive(false);
-				player->direction(player2->GetLocation());
-				player2->direction(player->GetLocation());
+				player->Exclusion(player2->GetLocation());
+				player2->Exclusion(player->GetLocation());
 
+				//当たった時、相手がどこに当たったかと相手がどこ向いているのか渡す
+				player->RepulsionX(player->GetLocation() - player2->GetLocation(),player2->GetDirection());
+				player2->RepulsionX(player2->GetLocation() - player->GetLocation(),player->GetDirection());
+
+
+
+				//player -> SetActive(false);
+				/*player->direction(player2->GetLocation());
+				player2->direction(player->GetLocation());*/
 					//player -> DecreaseHp(-50.0f);
 					//enemy[i] -> Finalize();
 					//delete enemy[i];
@@ -135,6 +144,10 @@ eSceneType GameMainScene::Update()
 
 		}
 	}
+
+
+	a = player2->GetLocation();
+	b = player->GetDirection();
 
 	//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 	if (player -> GetFuel() < 0.0f || player -> GetHp() < 0.0f)
@@ -173,7 +186,8 @@ void GameMainScene::Draw() const
 	DrawFormatString(510, 20, GetColor(0, 0, 0), "ハイスコア");
 	DrawFormatString(560, 40, GetColor(255, 255, 255), "%08d", high_score);
 	//DrawFormatString(510, 80, GetColor(0, 0, 0), "避けた数");
-	DrawFormatString(510, 80, GetColor(0, 0, 0), "Pad%d",a);
+	DrawFormatString(510, 700, GetColor(255, 255, 255), "X:%f,Y:%f",a.x,a.y);
+	DrawFormatString(510, 600, GetColor(255, 255, 255), "X:%f,Y:%f",b.x,b.y);
 
 	for (int i = 0; i < 3; i++)
 	{

@@ -56,6 +56,7 @@ void GameMainScene::Initialize()
 	player->Initialize(0,400);
 	player2->Initialize(1,200);
 
+	Pcar->Initialize();
 
 	for (int i = 0; i < 10; i++)
 	{

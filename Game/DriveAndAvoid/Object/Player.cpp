@@ -102,9 +102,6 @@ void Player::Draw()
 
 	DrawCircle(location.x, location.y, 3, GetColor(255,0,0), TRUE);
 
-	DrawFormatString(ax, 600, GetColor(255, 255, 255), "dx=%f",direction.x);
-	DrawFormatString(ax, 700, GetColor(255, 255, 255), "dy=%f",direction.y);
-
 
 	//バリアが生成されたら、描画を行う
 	if (barrier != nullptr)

@@ -42,5 +42,7 @@ private:
 
 	//“–‚½‚è”»’è
 	//bool IsHitCheck(Player* p, Enemy* e);
-	bool IsHitCheck(Player* p, Player* p2,Policecar* car);
+	bool IsHitCheckPlayer(Player* p, Player* p2);
+	bool IsHitCheckP1(Player* p,Policecar* car);
+	bool IsHitCheckP2(Player* p2,Policecar* car);
 };

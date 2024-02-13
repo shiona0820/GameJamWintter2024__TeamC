@@ -78,8 +78,6 @@ eSceneType GameMainScene::Update()
 	//プレイヤー２の更新
 	player2->Update();
 
-	
-
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
 
@@ -99,47 +97,9 @@ eSceneType GameMainScene::Update()
 		timer = 0;
 	}
 
-	//MAX720を180秒でいく 720/180=4
-	
-
-	
-
-	/*if (mileage / 20 % 100 == 0)
-	{
-		for (int i = 0; i < 10; i++)
-		{
-			if (enemy[i] == nullptr)
-			{
-				int type = GetRand(3) % 3;
-				enemy[i] = new Enemy(type, enemy_image[type]);
-				enemy[i]->Initialize();
-				break;
-			}
-		}
-	}*/
-
-
-	//敵の更新と当たり判定チェック
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	if (enemy[i] != nullptr)
-	//	{
-	//		enemy[i]->Update(player->GetSpeed());
-
-			//画面外に行ったら、敵を削除してスコア加算
-			if (enemy[i] -> GetLocation().y >= 640.0f)
-			{
-				enemy_count[enemy[i]->GetType()]++;
-				enemy[i]->Finalize();
-				delete enemy[i];
-				enemy[i] = nullptr;
-			}
-
-
-
-
 			//当たり判定の確認
-			if (IsHitCheck(player,enemy[i],player2))
+		//当たり判定の確認（プレイヤーとパトカー）
+			if (IsHitCheckPlayer(player,player2))
 			{
 
 				if (flg == false)
@@ -155,27 +115,28 @@ eSceneType GameMainScene::Update()
 				player2->RepulsionX(player2->GetLocation() - player->GetLocation(),player->GetDirection());
 
 
-
-				//player -> SetActive(false);
-				/*player->direction(player2->GetLocation());
-				player2->direction(player->GetLocation());*/
-					//player -> DecreaseHp(-50.0f);
-					//enemy[i] -> Finalize();
-					//delete enemy[i];
-					//enemy[i] = nullptr;
 			}
 
 
+			if (IsHitCheckP1(player,Pcar))
+			{
+				player->SetActive(false);
+			}
 
-		}
-	//		//画面外に行ったら、敵を削除してスコア加算
-	//		if (enemy[i] -> GetLocation().y >= 640.0f)
-	//		{
-	//			enemy_count[enemy[i]->GetType()]++;
-	//			enemy[i]->Finalize();
-	//			delete enemy[i];
-	//			enemy[i] = nullptr;
-	//		}
+			if (IsHitCheckP2(player2, Pcar))
+			{
+				player2->SetActive(false);
+			}
+
+
+				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
+			if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
+			{
+				return eSceneType::E_RESULT;
+			}
+			return GetNowScene();
+}
+
 
 			////当たり判定の確認
 			//if (IsHitCheck(player,enemy[i]))
@@ -187,29 +148,7 @@ eSceneType GameMainScene::Update()
 			//		enemy[i] = nullptr;
 			//}
 			
-	//当たり判定の確認（プレイヤーとパトカー）
-	if (IsHitCheck(player,Pcar))
-	{
-		player->SetActive(false);
-		player->DecreaseHp(-50.0f);
-		Pcar->Finalize();
-		//delete Pcar;
-		//Pcar = nullptr;
-	}
-		//}
-	//}
 
-
-	a = player2->GetLocation();
-	b = player->GetDirection();
-
-	//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
-	if (player -> GetFuel() < 0.0f || player -> GetHp() < 0.0f)
-	{
-		return eSceneType::E_RESULT;
-	}
-	return GetNowScene();
-}
 
 //描画処理
 void GameMainScene::Draw() const
@@ -231,8 +170,6 @@ void GameMainScene::Draw() const
 	player->Draw();
 	//PAD2プレイヤーの描画
 	player2->Draw();
-
-	
 
 	//パトカーの描画
 	Pcar->Draw();
@@ -380,13 +317,8 @@ void GameMainScene::ReadHighScore()
 
 
 //当たり判定処理（プレイヤーと敵）
-bool GameMainScene::IsHitCheck(Player* p, Player* p2, Policecar* car)
+bool GameMainScene::IsHitCheckP1(Player* p, Policecar* car)
 {
-	////プレイヤーがバリアを貼っていたら、当たり判定を無視する
-	//if (p->IsBarrier())
-	//{
-	//	return false;
-	//}
 
 	//敵情報が無ければ、当たり判定を無視する
 	if (car == nullptr)
@@ -396,15 +328,44 @@ bool GameMainScene::IsHitCheck(Player* p, Player* p2, Policecar* car)
 
 	//位置情報の差分を取得
 	Vector2D diff_location = p->GetLocation() - car->GetLocation();
-	Vector2D diff_location = p->GetLocation() - p2->GetLocation();
 
 	//当たり判定サイズの大きさを取得
 	Vector2D box_ex = p->GetBoxSize() + car->GetBoxSize();
-	Vector2D box_ex = p->GetBoxSize() + p2->GetBoxSize();
 
 	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
 
+}
 
+bool GameMainScene::IsHitCheckP2(Player* p2, Policecar* car)
+{
+
+	//敵情報が無ければ、当たり判定を無視する
+	if (car == nullptr)
+	{
+		return false;
+	}
+
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetLocation() - car->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetBoxSize() + car->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+bool GameMainScene::IsHitCheckPlayer(Player* p, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p->GetLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p->GetBoxSize()+p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
 
 }

@@ -30,6 +30,9 @@ void SceneManager::Initialize()
 		throw("ウィンドウモードで起動できませんでした\n");
 	}
 
+	//ウィンドウサイズ指定   MAX720を180秒でいく
+	SetGraphMode(1280, 720, 32);
+
 	//DXライブラリの初期化
 	if (DxLib_Init() == -1)
 	{

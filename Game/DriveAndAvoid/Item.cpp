@@ -4,7 +4,7 @@
 //コンストラクタ
 Item::Item()
 {
-	rand = 0;
+	rand_x,rand_y = 0;
 	coneimage = LoadGraph("Resource/images/cone.bmp");
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
@@ -26,9 +26,13 @@ void Item::Update()
 	{
 		if (cone[i].flg == TRUE)
 		{
-			SRand(i);
-			rand = GetRand(99);
-			if (rand <= 40)
+			rand_x = GetRand(640-200);
+			rand_y = GetRand(480 - 200);
+			if (rand_x <= 40)
+			{
+				cone[i].flg = true;
+			}
+			if (rand_y <= 40)
 			{
 				cone[i].flg = true;
 			}
@@ -42,14 +46,12 @@ void Item::Draw() const
 	//障害物（三角コーン）画像の描画
 	//DrawRotaGraph(90, 220, 0.7, 0.0, coneimage, TRUE);
 
-	DrawBox(200, 200, 400, 400, 0xff0000, FALSE);
-
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (cone[i].flg == true)
 		{
 			//障害物（三角コーン）画像の描画
-			DrawRotaGraph(90, 220, 0.7, 2.0, coneimage, true);
+			LoadGraphScreen(rand_x, rand_y, "Resource/images/cone.bmp", TRUE);
 		}
 		else
 		{

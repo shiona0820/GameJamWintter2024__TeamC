@@ -6,7 +6,7 @@ class Item
 {
 private:
 	int coneimage;
-	int rand;
+	int rand_x, rand_y;
 
 
 public:

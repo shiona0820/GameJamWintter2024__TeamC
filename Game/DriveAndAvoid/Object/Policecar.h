@@ -6,9 +6,11 @@
 class Policecar
 {
 private:
-	int x;
-	int y;
+	
 	int image;
+
+	Vector2D location;   //ˆÊ’uî•ñ
+	Vector2D box_size;   //“–‚½‚è”»’è‚Ì‘å‚«‚³
 
 public:
 	Policecar();
@@ -19,6 +21,7 @@ public:
 	void Draw();              //•`‰æˆ—
 	void Finalize();          //I—¹ˆ—
 
-
+	Vector2D GetLocation() const; //ˆÊ’uî•ñ‚Ìæ“¾
+	Vector2D GetBoxSize() const;  //“–‚½‚è”»’è‚Ì‘å‚«‚³‚ğæ“¾
 };
 

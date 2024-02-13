@@ -377,8 +377,3 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 	
 
 }
-
-void Player::RepulsionY(Vector2D xy, Vector2D d)
-{
-
-}

@@ -130,26 +130,38 @@ eSceneType GameMainScene::Update()
 			}
 
 
-			// ドアに当たると回転する(プレイヤー２)
-			if (IsHitDoorR(player, player2))
+			//攻撃の入力押したときだけ判定にする↓
+
+			if (player->GetAttackflg() == TRUE)
 			{
-				player2->SetActive(false);
+				//プレイヤー１の攻撃
+				// ドアに当たると回転する(プレイヤー２)
+
+				if (IsHitDoorR(player, player2))
+				{
+					player2->SetActive(false);
+				}
+
+				if (IsHitDoorL(player, player2))
+				{
+					player2->SetActive(false);
+				}
+
 			}
 
-			if (IsHitDoorL(player, player2))
+			if (player2->GetAttackflg() == TRUE)
 			{
-				player2->SetActive(false);
-			}
+				//プレイヤー２の攻撃
+				// ドアに当たると回転する（プレイヤー１）
+				if (IsHitDoorR2(player, player2))
+				{
+					player->SetActive(false);
+				}
 
-			// ドアに当たると回転する（プレイヤー１）
-			if (IsHitDoorR2(player, player2))
-			{
-				player->SetActive(false);
-			}
-
-			if (IsHitDoorL2(player, player2))
-			{
-				player->SetActive(false);
+				if (IsHitDoorL2(player, player2))
+				{
+					player->SetActive(false);
+				}
 			}
 
 				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する

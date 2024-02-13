@@ -21,6 +21,10 @@ private:
 	int playerd;//どこに当たったかの格納
 	Vector2D dire;//計算用
 
+	int crackimg;//車のひび画像用
+	int alpha;//ひびを透かす用
+
+
 	// 攻撃時の画像
 	int carRimg, carLimg, doorRimg, doorLimg;
 
@@ -54,6 +58,8 @@ public:
 	int GetBarriarCount() const;         //バリアの枚数取得
 	bool IsBarrier() const;         //バリア有効かを取得
 
+	int GetAttackflg() const;//アタックフラグを返す
+
 	//void direction(Vector2D xy);			//どこに当たったか調べる
 	void RepulsionX(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用左右
 	void RepulsionY(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用上下
@@ -61,6 +67,7 @@ public:
 
 	//自分の車に侵入できなくする
 	void Exclusion(Vector2D loce);
+
 
 
 	Vector2D GetDoorRLocation() const;   //位置情報取得

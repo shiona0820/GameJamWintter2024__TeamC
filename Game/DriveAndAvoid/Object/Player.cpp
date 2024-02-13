@@ -49,6 +49,8 @@ void Player::Initialize(int pnum,float x)
 	DoorRlocation = Vector2D(x, 380.0f);
 	DoorR_size = Vector2D(35.0f, 15.0f);
 
+	alpha = 0;
+
 	//画像の読み込み
 	if (pnum == 0)
 	{
@@ -70,6 +72,7 @@ void Player::Initialize(int pnum,float x)
 
 	}
 
+	crackimg = LoadGraph("Resource/images/crack.png");
 
 	//エラーチェック
 	if (image == -1)
@@ -98,6 +101,10 @@ void Player::Update()
 
 	//燃料の消費
 	fuel -= speed;
+
+	//透かし
+	alpha++;
+	
 
 	//移動処理
 	Movement();
@@ -167,6 +174,19 @@ void Player::Draw()
 	{
 		//プレイヤー画像の描画
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+
+		//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
+		//爆発
+		//攻撃くらったらHP減る関数とHPの変数を作る
+
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	}
 	else if (Attackflg == true && Bflg == true)
 	{
@@ -275,6 +295,12 @@ Vector2D Player::GetDoorLSize() const
 	return this->DoorL_size;
 }
 
+
+//プレイヤー１のドア当たり判定の大きさ取得処理（左）
+int Player::GetAttackflg() const
+{
+	return this->Attackflg;
+}
 
 //速さ取得処理
 float Player::GetSpeed() const

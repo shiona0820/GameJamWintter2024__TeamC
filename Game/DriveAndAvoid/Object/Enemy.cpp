@@ -18,17 +18,23 @@ void Enemy::Initialize()
 	//出現させるX座標パターンを取得
 	float random_x = (float)(GetRand(4) * 105 + 40);
 	//生成位置の設定
-	location = Vector2D(random_x, -50.0f);
+	//location = Vector2D(random_x, -50.0f);
+	//敵生成位置固定
+	location = Vector2D(280.0f,500.0f);
 	//当たり判定の設定
 	box_size = Vector2D(31.0f, 60.0f);
 	//速さの設定
 	speed = (float)(this->type * 2);
+
+	//画像読み込み
+	image = LoadGraph("Resource/images/car1pol.bmp");
+
 }
 
 void Enemy::Update(float speed)
 {
-	//位置情報に移動量を加算する
-	location += Vector2D(0.0f, this->speed + speed - 6);
+	////位置情報に移動量を加算する
+	//location += Vector2D(0.0f, this->speed + speed - 6);
 }
 
 void Enemy::Draw() const

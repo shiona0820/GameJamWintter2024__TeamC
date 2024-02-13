@@ -3,17 +3,6 @@
 #include"../Utility/Vector2D.h"
 #include"Barrier.h"
 
-
-//プレイヤーがどこに当たったか？
-enum direction
-{
-	RGIHT,//右
-	LEFT,//左
-	UP,//上
-	UNDER,//下
-
-};
-
 class Player
 {
 private:

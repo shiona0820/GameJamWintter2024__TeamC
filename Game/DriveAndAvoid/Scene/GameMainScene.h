@@ -3,6 +3,8 @@
 #include"SceneBase.h"
 #include"../Object/Player.h"
 #include"../Object/Enemy.h"
+#include"../Object/Policecar.h"
+
 
 class GameMainScene : public SceneBase
 {
@@ -16,6 +18,9 @@ private:
 	Player* player;     //プレイヤー
 	Player* player2;     //プレイヤー2
 	Enemy** enemy;       //敵
+	Policecar* Pcar;     //パトカー
+	int count;          //６０回数える
+	int timer;          //countが６０になったら１数える
 
 	int time;//アクション起きた時の時間を渡す用
 	bool flg;
@@ -34,6 +39,8 @@ public:
 private:
 	//ハイスコア読み込み処理
 	void ReadHighScore();
+
 	//当たり判定
-	bool IsHitCheck(Player* p, Enemy* e,Player* p2);
+	//bool IsHitCheck(Player* p, Enemy* e);
+	bool IsHitCheck(Player* p, Player* p2,Policecar* car);
 };

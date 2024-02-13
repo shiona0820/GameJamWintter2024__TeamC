@@ -31,7 +31,6 @@ void SceneManager::Initialize()
 	}
 
 	//ウィンドウサイズ指定
-	//SetWindowSize(1280, 720);
 	SetGraphMode(1280, 720, 32);
 
 
@@ -48,7 +47,7 @@ void SceneManager::Initialize()
 	}
 
 	//タイトルシーンから始める
-	ChangeScene(eSceneType::E_TITLE);
+	ChangeScene(eSceneType::E_MAIN);
 }
 
 //シーンマネージャー機能：更新処理

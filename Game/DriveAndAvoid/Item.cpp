@@ -26,7 +26,7 @@ void Item::Update()
 	{
 		if (cone[i].flg == TRUE)
 		{
-			rand_x = GetRand(640-200);
+			rand_x = GetRand(640 - 200);
 			rand_y = GetRand(480 - 200);
 			if (rand_x <= 40)
 			{
@@ -48,16 +48,17 @@ void Item::Draw() const
 
 	for (int i = 0; i < ITEM_MAX; i++)
 	{
-		if (cone[i].flg == true)
+		//áŠQ•¨iOŠpƒR[ƒ“j‰æ‘œ‚Ì•`‰æ
+		LoadGraphScreen(rand_x, rand_y, "Resource/images/cone.bmp", TRUE);
+		/*if (cone[i].flg == true)
 		{
-			//áŠQ•¨iOŠpƒR[ƒ“j‰æ‘œ‚Ì•`‰æ
-			LoadGraphScreen(rand_x, rand_y, "Resource/images/cone.bmp", TRUE);
+			
 		}
 		else
 		{
 			SetFontSize(20);
 			DrawString(100, 100, "•`‰æ‚Å‚«‚Ü‚¹‚ñ", 0xfff000);
-		}
+		}*/
 	}
 
 }

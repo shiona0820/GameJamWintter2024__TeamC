@@ -17,6 +17,9 @@ private:
 	Player* player2;     //プレイヤー2
 	Enemy** enemy;       //敵
 
+	int time;//アクション起きた時の時間を渡す用
+	bool flg;
+
 public:
 	GameMainScene();
 	virtual ~GameMainScene();

@@ -1,11 +1,12 @@
 #include"Player.h"
 #include"../Utility/InputControl.h"
 #include"DxLib.h"
-
+#include<math.h>
 
 #define e 0.800
 #define g 9.807
 #define y_max 2.000
+
 
 Player::Player() : is_active(false), image(NULL), location(0.0f), box_size(0.0f),
 angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr)
@@ -30,6 +31,12 @@ void Player::Initialize(int pnum)
 	fuel = 20000;
 	barrier_count = 3;
 	playernum = pnum;
+	playerd = 0;
+
+	y = 0;
+	t = 0;
+	time2 = 0;
+	v0 = 0;
 
 	//画像の読み込み
 	image = LoadGraph("Resource/images/car1pol.bmp");
@@ -96,13 +103,42 @@ void Player::Update()
 void Player::Draw()
 {
 	//プレイヤー画像の描画
-	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+	DrawRotaGraphF(location.x, location.y-y, 1.0, angle, image, TRUE);
+
+	DrawCircle(location.x, location.y, 3, GetColor(255,0,0), TRUE);
+
+	DrawFormatString(700, 700, GetColor(255, 255, 255), "y=%d",y);
+
 
 	//バリアが生成されたら、描画を行う
 	if (barrier != nullptr)
 	{
 		barrier->Draw(this->location);
 	}
+
+	switch (playerd)
+	{
+	case 0:
+		//左下
+		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左");
+		break;
+	case 1:
+		//右下
+		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右！");
+		break;
+	case 2:
+		//左上
+		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
+
+		break;
+	case 3:
+		//右上
+		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
+		break;
+	default:
+		break;
+	}
+
 }
 
 //終了処理
@@ -201,8 +237,8 @@ void Player::Movement()
 	location += move;
 
 	//画面外に行かないように制限する
-	if ((location.x < box_size.x) || (location.x >= 640.0f - 180.0f) || 
-		(location.y < box_size.y) || (location.y >= 480.0f - box_size.y))
+	if ((location.x < box_size.x) || (location.x >= 1280.0f - 180.0f) || 
+		(location.y < box_size.y) || (location.y >= 720.0f - box_size.y))
 	{
 		location -= move;
 	}
@@ -227,14 +263,81 @@ void Player::Acceleration()
 //
 void Player::direction(Vector2D xy)
 {
-	//中心とってからその中心のｘ
-	//相手のxが自分より小さくて、ｙが大きい場合
-	//ドロウサークルを表示してｘｙの場所がどこか調べてくれ
+	//左からぶつかった場合
 	if (location.x > xy.x) {
-		if (location.y < xy.y)
-		{
-
-		}
+			playerd	=	direction::LEFT;
 	}
+
+	//右からぶつかった場合
+	if (location.x<xy.x) 
+	{
+		playerd = direction::RGIHT;
+	}
+
+	////上からぶつかった場合
+	//if (location.y > xy.y)
+	//{
+	//	playerd = direction::UP;
+	//}
+
+	////下からぶつかった場合
+	//if (location.y < xy.y)
+	//{
+	//	playerd = direction::UNDER;
+	//}
 	
+}
+
+void Player::Repulsion(int time)
+{
+	//time2 = GetNowCount();
+	//t = (double)(time2 - time) / 10000.000;
+	//v0 = sqrt(2.000 * g * y_max);//初速度を計算
+	//v0 *= e;
+	//y = (int)((v0 * t - 0.500 * g * t * t) * 480.000 / y_max);
+	Vector2D move = Vector2D(0.0f);
+	
+	move = Vector2D(-10.0f,0.0f);
+
+
+
+	switch (playerd)
+	{
+	case 0:
+		//左からあたった場合
+		angle = -DX_PI_F / 18;
+		for (int i = 0; i < 10; i++)
+		{
+			location.x += 2;
+		}
+		break;
+	case 1:
+		//右から当たった場合
+		angle = DX_PI_F / 18;
+		for (int i = 0; i < 10; i++)
+		{
+			location.x -= 2;
+		}
+		break;
+	case 2:
+		//上からあたった場合
+		for (int i = 0; i < 10; i++)
+		{
+			location.y -= 2;
+		}
+
+		break;
+	case 3:
+		//下
+		for (int i = 0; i < 10; i++)
+		{
+			location.y += 2;
+		}
+
+		break;
+	default:
+		break;
+	}
+
+
 }

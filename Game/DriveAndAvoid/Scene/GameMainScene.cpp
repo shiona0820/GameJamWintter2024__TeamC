@@ -7,7 +7,7 @@
 int a=0;
 
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
-barrier_image(NULL), mileage(0), player(nullptr), enemy(nullptr)
+barrier_image(NULL), mileage(0), player(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -109,11 +109,19 @@ eSceneType GameMainScene::Update()
 				enemy[i] = nullptr;
 			}
 
+
 			//“–‚½‚è”»’è‚ÌŠm”F
 			if (IsHitCheck(player,enemy[i],player2))
 			{
 
-				player -> SetActive(false);
+				if (flg == false)
+				{
+					time = GetNowCount();
+					flg = true;
+				}
+
+				player->Repulsion(time);
+				//player -> SetActive(false);
 				player->direction(player2->GetLocation());
 				player2->direction(player->GetLocation());
 

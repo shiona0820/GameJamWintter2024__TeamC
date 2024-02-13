@@ -7,10 +7,10 @@
 //プレイヤーがどこに当たったか？
 enum direction
 {
-	Lowerleft,//左下
-	Lowerright,//右下
-	Upperleft,//左上
-	Upperright,//右上
+	RGIHT,//右
+	LEFT,//左
+	UP,//上
+	UNDER,//下
 
 };
 
@@ -28,8 +28,12 @@ private:
 	int barrier_count;   //バリアの枚数
 	Barrier* barrier;    //バリア
 	int playernum;//プレイヤーの番号
-
+	int playerd;//どこに当たったかの格納
 	
+	//反発用
+	int time2;//経過時間得る用
+	double t;//経過時間を計算して中に取り込むよう
+	int y;//計算結果代入用	
 
 	float v0;//反発係数計算用
 
@@ -54,7 +58,8 @@ public:
 	bool IsBarrier() const;         //バリア有効かを取得
 
 	void direction(Vector2D xy);			//どこに当たったか調べる
-		
+	void Repulsion(int time);//ぶつかったら反発起こす用
+
 private:
 	void Movement();      //移動処理
 	void Acceleration();    //加速処理

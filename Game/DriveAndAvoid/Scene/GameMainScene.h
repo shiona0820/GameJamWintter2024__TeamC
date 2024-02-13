@@ -45,4 +45,12 @@ private:
 	bool IsHitCheckPlayer(Player* p, Player* p2);
 	bool IsHitCheckP1(Player* p,Policecar* car);
 	bool IsHitCheckP2(Player* p2,Policecar* car);
+
+	// ドアの当たり判定
+	bool IsHitDoorR(Player* p1,Player* p2);
+	bool IsHitDoorL(Player* p1,Player* p2);
+
+	// ドアの当たり判定（プレイヤー２）
+	bool IsHitDoorR2(Player* p1, Player* p2);
+	bool IsHitDoorL2(Player* p1, Player* p2);
 };

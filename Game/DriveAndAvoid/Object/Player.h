@@ -21,6 +21,18 @@ private:
 	int playerd;//どこに当たったかの格納
 	Vector2D dire;//計算用
 
+	// 攻撃時の画像
+	int carRimg, carLimg, doorRimg, doorLimg;
+
+	int Attackflg;		// 攻撃フラグ
+	int Bflg, Xflg;
+	float DoorRangle, DoorLangle, Door2Rangle, Door2Langle;
+	int Acount;
+	Vector2D DoorRlocation;   //ドアの位置座標
+	Vector2D DoorR_size;		//ドアの当たり判定の大きさ
+	Vector2D DoorLlocation;   //ドアの位置座標
+	Vector2D DoorL_size;		//ドアの当たり判定の大きさ
+
 public:
 	Player();
 	~Player();
@@ -49,6 +61,13 @@ public:
 
 	//自分の車に侵入できなくする
 	void Exclusion(Vector2D loce);
+
+
+	Vector2D GetDoorRLocation() const;   //位置情報取得
+	Vector2D GetDoorRSize() const;    //当たり判定の大きさ取得
+
+	Vector2D GetDoorLLocation() const;   //位置情報取得
+	Vector2D GetDoorLSize() const;    //当たり判定の大きさ取得
 
 private:
 	void Movement();      //移動処理

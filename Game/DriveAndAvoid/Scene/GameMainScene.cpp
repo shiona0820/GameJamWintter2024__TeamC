@@ -130,6 +130,28 @@ eSceneType GameMainScene::Update()
 			}
 
 
+			// ドアに当たると回転する(プレイヤー２)
+			if (IsHitDoorR(player, player2))
+			{
+				player2->SetActive(false);
+			}
+
+			if (IsHitDoorL(player, player2))
+			{
+				player2->SetActive(false);
+			}
+
+			// ドアに当たると回転する（プレイヤー１）
+			if (IsHitDoorR2(player, player2))
+			{
+				player->SetActive(false);
+			}
+
+			if (IsHitDoorL2(player, player2))
+			{
+				player->SetActive(false);
+			}
+
 				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 			if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
 			{
@@ -365,6 +387,62 @@ bool GameMainScene::IsHitCheckPlayer(Player* p, Player* p2)
 
 	//当たり判定サイズの大きさを取得
 	Vector2D box_ex = p->GetBoxSize()+p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤーのドアの当たり判定（右）
+bool GameMainScene::IsHitDoorR(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p1->GetDoorRLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p1->GetDoorRSize() + p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤーのドアの当たり判定（左）
+bool GameMainScene::IsHitDoorL(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p1->GetDoorLLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p1->GetDoorLSize() + p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤー2のドアの当たり判定（右）
+bool GameMainScene::IsHitDoorR2(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetDoorRLocation() - p1->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetDoorRSize() + p1->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤー2のドアの当たり判定（左）
+bool GameMainScene::IsHitDoorL2(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetDoorLLocation() - p1->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetDoorLSize() + p1->GetBoxSize();
 
 	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));

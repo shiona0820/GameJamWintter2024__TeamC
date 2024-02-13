@@ -32,9 +32,44 @@ void Player::Initialize(int pnum,float x)
 	playernum = pnum;
 	playerd = 0;
 
+	Acount = 0;
+	Bflg = false;
+	Xflg = false;
+	Attackflg = false;
+	DoorRangle = 0.0f;
+	DoorLangle = 0.0f;
+	Door2Rangle = 0.0f;
+	Door2Langle = 0.0f;
 
-	//画像の読み込み.....仮で自身の画像変更済み
-	image = LoadGraph("Resource/images/gentuki.bmp");
+	// プレイヤー１のドア（右）
+	DoorRlocation = Vector2D(x, 380.0f);
+	DoorR_size = Vector2D(18.0f, 15.0f);
+
+	// プレイヤー１のドア（左）
+	DoorRlocation = Vector2D(x, 380.0f);
+	DoorR_size = Vector2D(35.0f, 15.0f);
+
+	//画像の読み込み
+	if (pnum == 0)
+	{
+		image = LoadGraph("Resource/images/car2.bmp");
+		carRimg = LoadGraph("Resource/images/OpenDoor_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor_L.png");
+		doorRimg = LoadGraph("Resource/images/Door_R.png");
+		doorLimg = LoadGraph("Resource/images/Door_L.png");
+	}
+	else if(pnum==1)
+	{
+		//player2画像の読み込み
+		image = LoadGraph("Resource/images/car3.bmp");
+		carRimg = LoadGraph("Resource/images/OpenDoor2_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor2_L.png");
+		doorRimg = LoadGraph("Resource/images/Door2_R.png");
+		doorLimg = LoadGraph("Resource/images/Door2_L.png");
+
+
+	}
+
 
 	//エラーチェック
 	if (image == -1)
@@ -49,6 +84,9 @@ void Player::Update()
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
 	{
+		Attackflg = false;
+		Bflg = false;
+		Xflg = false;
 		angle += DX_PI_F / 24.0f;
 		speed = 1.0f;
 		if (angle >= DX_PI_F * 4.0f)
@@ -72,15 +110,40 @@ void Player::Update()
 		is_active = false;
 	}
 
-	//バリア処理
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_B,playernum) && barrier_count > 0)
+	//攻撃処理（右）
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
 	{
-		if (barrier == nullptr)
+		DoorRlocation.x = location.x + 25;
+		DoorRlocation.y = location.y + 2;
+		Attackflg = true;
+		Bflg = true;
+		Acount = 0;
+	}
+
+	//攻撃処理（左）
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
+	{
+		DoorLlocation.x = location.x - 55;
+		DoorLlocation.y = location.y + 2;
+		Attackflg = true;
+		Xflg = true;
+		Acount = 0;
+	}
+
+	// 少ししたらドアを閉じる
+	if (Attackflg == true)
+	{
+		Acount++;
+		if (Acount >= 20)
 		{
-			barrier_count--;
-			barrier = new Barrier;
+			Acount = 0;
+			Attackflg = false;
+			Bflg = false;
+			Xflg = false;
+
 		}
 	}
+
 
 	//バリアが生成されていたら、更新を行う
 	if (barrier != nullptr)
@@ -97,16 +160,29 @@ void Player::Update()
 //描画処理
 void Player::Draw()
 {
-	//プレイヤー画像の描画
-	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
 
-	DrawCircle(location.x, location.y, 3, GetColor(255,0,0), TRUE);
+	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
 
-
-	//バリアが生成されたら、描画を行う
-	if (barrier != nullptr)
+	if (Attackflg == false)
 	{
-		barrier->Draw(this->location);
+		//プレイヤー画像の描画
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+	}
+	else if (Attackflg == true && Bflg == true)
+	{
+
+		//プレイヤー画像の描画（攻撃時）
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
+		// ドア描画
+		DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
+
+	}
+	else if (Attackflg == true && Xflg == true)
+	{
+		//プレイヤー画像の描画（攻撃時）
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
+		// ドア描画
+		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
 	}
 
 	switch (playerd)
@@ -174,6 +250,31 @@ Vector2D Player::GetBoxSize() const
 {
 	return this->box_size;
 }
+
+//プレイヤー１のドア位置情報取得処理（右）
+Vector2D Player::GetDoorRLocation() const
+{
+	return this->DoorRlocation;
+}
+
+//プレイヤー１のドア当たり判定の大きさ取得処理（右）
+Vector2D Player::GetDoorRSize() const
+{
+	return this->DoorR_size;
+}
+
+//プレイヤー１のドア位置情報取得処理（左）
+Vector2D Player::GetDoorLLocation() const
+{
+	return this->DoorLlocation;
+}
+
+//プレイヤー１のドア当たり判定の大きさ取得処理（左）
+Vector2D Player::GetDoorLSize() const
+{
+	return this->DoorL_size;
+}
+
 
 //速さ取得処理
 float Player::GetSpeed() const

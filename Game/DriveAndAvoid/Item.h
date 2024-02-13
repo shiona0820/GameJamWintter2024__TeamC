@@ -1,9 +1,13 @@
+#pragma once
+
+#define ITEM_MAX  3
 
 class Item
 {
 private:
 	int coneimage;
 	int rand;
+
 
 public:
 	Item();

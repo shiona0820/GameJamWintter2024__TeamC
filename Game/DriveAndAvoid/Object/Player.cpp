@@ -74,7 +74,15 @@ void Player::Initialize(int pnum,float x)
 		carLimg = LoadGraph("Resource/images/OpenDoor2_L.png");
 		doorRimg = LoadGraph("Resource/images/Door2_R.png");
 		doorLimg = LoadGraph("Resource/images/Door2_L.png");
-
+	}
+	else if (pnum == 2)
+	{
+		//player3âÊëúÇÃì«Ç›çûÇ›
+		image = LoadGraph("Resource/images/car1.bmp");
+		carRimg = LoadGraph("Resource/images/OpenDoor3_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor3_L.png");
+		doorRimg = LoadGraph("Resource/images/Door3_R.png");
+		doorLimg = LoadGraph("Resource/images/Door3_L.png");
 
 	}
 

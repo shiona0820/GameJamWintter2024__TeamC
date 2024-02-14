@@ -25,6 +25,7 @@ private:
 	int enemy_count[3]; //通り過ぎた敵カウント
 	Player* player;     //プレイヤー
 	Player* player2;     //プレイヤー2
+	Player* player3;     //プレイヤー3
 	Enemy** enemy;       //敵
 	Policecar* Pcar;     //パトカー
 	
@@ -36,6 +37,7 @@ private:
 	int timer;          //countが６０になったら１数える
 	int ptimer;
 	int ptimer2;
+	int ptimer3;
 
 	int time;//アクション起きた時の時間を渡す用
 	bool flg;
@@ -72,6 +74,7 @@ private:
 	bool IsHitCheckPlayer(Player* p, Player* p2);
 	bool IsHitCheckP1(Player* p,Policecar* car);
 	bool IsHitCheckP2(Player* p2,Policecar* car);
+	bool IsHitCheckP3(Player* p3,Policecar* car);
 
 	// ドアの当たり判定
 	bool IsHitDoorR(Player* p1,Player* p2);
@@ -80,6 +83,11 @@ private:
 	// ドアの当たり判定（プレイヤー２）
 	bool IsHitDoorR2(Player* p1, Player* p2);
 	bool IsHitDoorL2(Player* p1, Player* p2);
+
+	// ドアの当たり判定（プレイヤー３）
+	bool IsHitDoorR2(Player* p1, Player* p2);
+	bool IsHitDoorL2(Player* p1, Player* p2);
+
 
 	//アイテムの当たり判定
 	bool IsHitCheckItem(Player* p, Item* i);

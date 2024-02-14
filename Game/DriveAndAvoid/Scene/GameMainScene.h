@@ -4,6 +4,7 @@
 #include"../Object/Player.h"
 #include"../Object/Enemy.h"
 #include"../Object/Policecar.h"
+#include "../Item.h"
 
 
 class GameMainScene : public SceneBase
@@ -19,6 +20,7 @@ private:
 	Player* player2;     //ƒvƒŒƒCƒ„[2
 	Enemy** enemy;       //“G
 	Policecar* Pcar;     //ƒpƒgƒJ[
+	Item* item;
 	int count;          //‚U‚O‰ñ”‚¦‚é
 	int timer;          //count‚ª‚U‚O‚É‚È‚Á‚½‚ç‚P”‚¦‚é
 

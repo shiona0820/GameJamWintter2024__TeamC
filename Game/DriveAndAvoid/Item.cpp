@@ -48,15 +48,15 @@ void Item::Draw() const
 		if (cone[i].flg == true /*|| count==i*/)
 		{
 			//áŠQ•¨iŽOŠpƒR[ƒ“j‰æ‘œ‚Ì•`‰æ
-			DrawRotaGraph(200*cone[i].x, 220*cone[i].y, 0.7, 0.0, coneimage, true);
+			DrawRotaGraph(200/**cone[i].x*/, 220/**cone[i].y*/, 0.7, 0.0, coneimage, true);
 		}
-		for (int j = 0; j > 600; j++)
+		/*for (int j = 0; j > 600; j++)
 		{
 			if (gWaitTime >= 600)
 			{
 				DeleteGraph(coneimage);
 			}
-		}
+		}*/
 		
 	}
 

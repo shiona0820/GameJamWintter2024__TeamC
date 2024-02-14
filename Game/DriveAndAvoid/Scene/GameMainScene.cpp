@@ -67,6 +67,8 @@ void GameMainScene::Initialize()
 	count = 0;
 	timer = 0;
 
+	item = new Item;
+
 }
 
 //更新処理
@@ -78,6 +80,9 @@ eSceneType GameMainScene::Update()
 	player->Update();
 	//プレイヤー２の更新
 	player2->Update();
+
+	//アイテムの更新
+	item->Update();
 
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
@@ -196,6 +201,9 @@ void GameMainScene::Draw() const
 
 	//パトカーの描画
 	Pcar->Draw();
+
+	//アイテムの描画
+	item->Draw();
 
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);

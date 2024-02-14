@@ -3,6 +3,8 @@
 #include"DxLib.h"
 #include<math.h>
 
+int GameMainScene::Wineer=0;
+
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0),
 audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
@@ -29,6 +31,8 @@ void GameMainScene::Initialize()
 	//画像の読み込み
 	back_ground = LoadGraph("Resource/images/back1.bmp");
 	audience_img = LoadGraph("Resource/images/audience.png");
+	blackimg = LoadGraph("Resource/images/black.png");
+	starimg = LoadGraph("Resource/images/star.png");
 	LoadDivGraph("Resource/images/123.png", 3, 3, 1, 128, 128, number_img);
 
 	//エラーチェック
@@ -60,7 +64,7 @@ void GameMainScene::Initialize()
 
 	Pcar->Initialize();
 
-
+	
 
 	min = 1;
 	max = 4;
@@ -74,7 +78,7 @@ void GameMainScene::Initialize()
 //		cone[i].x=1+(int)(rand()*(4-1+1));
 
 	
-
+	alpha = 0;
 
 	//初期化
 	count = 0;
@@ -86,6 +90,8 @@ void GameMainScene::Initialize()
 
 	p1win = 0;
 	p2win = 0;
+	p2win = 0;
+	whowin = 0;
 }
 
 //更新処理
@@ -119,7 +125,7 @@ eSceneType GameMainScene::Update()
 	else
 	{
 		//三回分の勝ち負けを記録する
-//プレイヤー１か２が死んだ場合
+		//プレイヤー１か２が死んだ場合
 		if (player->GetDeathFlg() == true || player2->GetDeathFlg() == true)
 		{
 			win();
@@ -314,8 +320,31 @@ eSceneType GameMainScene::Update()
 	}*/
 	}
 
-	return GetNowScene();
+	if (p1win > 2)
+	{
+		Wineer = 1;
+	}
+	if (p2win > 2)
+	{
+		Wineer = 2;
+	}
+	if (p3win > 2)
+	{
+		Wineer = 3;
+	}
 
+
+	if (p2win > 2 || p1win > 2)
+	{
+		//リザルト画面に行く
+		return eSceneType::E_RESULT;
+
+	}
+	else
+	{
+		return GetNowScene();
+
+	}
 
 }
 
@@ -359,40 +388,46 @@ void GameMainScene::Draw() const
 	//パトカーの描画
 	Pcar->Draw();
 
+
+	if (winflg == true)
+	{
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		DrawGraph(0, 0, blackimg, FALSE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		SetFontSize(40);
+		DrawString(800, 300, "player1", GetColor(255, 255, 255));
+		DrawString(280, 300, "player2", GetColor(255, 255, 255));
+
+		if (whowin == 2)
+		{
+			DrawString(300, 340, "Win!!", GetColor(255, 255, 255));
+		}
+		else if (whowin == 1)
+		{
+			DrawString(800, 340, "Win!!", GetColor(255, 255, 255));
+		}
+
+		for (int i = 0; i < p1win; i++)
+		{
+			DrawGraph(800+50*i, 400, starimg, TRUE);
+		}
+
+		for (int i = 0; i < p2win; i++)
+		{
+			DrawGraph(300+50*i , 400, starimg, TRUE);
+		}
+
+	}
+
+
 }
 
 //終了時処理
 void GameMainScene::Finalize()
 {
-	////スコアを計算する
-	//int score = (mileage / 10 * 10);
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	score += (i + 1) * 50 * enemy_count[i];
-	//}
-
-	////リザルトデータの書き込み
-	//FILE* fp = nullptr;
-	////ファイルオープン
-	//errno_t result = fopen_s(&fp, "Resource/dat/result_data.csv", "w");
-
-	////エラーチェック
-	//if (result != 0)
-	//{
-	//	throw("Rsource/dat/result_data.csvが開けません\n");
-	//}
-
-	//スコアを保存
-	//fprintf(fp, "%d,\n", score);
-
-	//避けた和人得点を保存
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	fprintf(fp, "%d,\n", enemy_count[i]);
-	//}
-
-	//ファイルクローズ
-	//fclose(fp);
 
 	//動的確保したオブジェクトを削除する
 	player->Finalize();
@@ -404,19 +439,6 @@ void GameMainScene::Finalize()
 
 	Pcar->Finalize();
 	delete Pcar;
-
-
-
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	if (enemy[i] != nullptr)
-	//	{
-	//		enemy[i]->Finalize();
-	//		delete enemy[i];
-	//		enemy[i] = nullptr;
-	//	}
-	//}
-	//delete[] enemy;
 }
 
 
@@ -429,28 +451,50 @@ void GameMainScene::win()
 		if (player->GetDeathFlg() == true)
 		{
 			p2win++;
+			whowin = 2;
 		}
 
 		//プレイヤー２が死んだ場合
 		if (player2->GetDeathFlg() == true)
 		{
 			p1win++;
+			whowin = 1;
 		}
 	}
 
 	winflg = true;
 
-	//オブジェクトの初期化
-	player->Initialize(0, 400);
-	player2->Initialize(1, 200);
-
-	Pcar->Initialize();
-
-	for (int i = 0; i < 10; i++)
+	if (winflg == true)
 	{
-		item[i] = new Item;
-		item[i]->Initialize(GetRand(10));
+		alpha+=2;
 	}
+
+	if (p2win < 2 || p1win < 2)
+	{
+		if (alpha > 400) {
+
+			//オブジェクトの初期化
+			player->Initialize(0, 400);
+			player2->Initialize(1, 200);
+
+			Pcar->Initialize();
+
+			for (int i = 0; i < 10; i++)
+			{
+				item[i] = new Item;
+				item[i]->Initialize(GetRand(10));
+			}
+			count = 0;
+			timer = 0;
+
+			startflg = false;
+			starttimer = 0;
+			startnum = 3;
+			alpha = 0;
+			winflg = false;
+		}
+	}
+
 
 }
 
@@ -470,31 +514,6 @@ void GameMainScene::ReadHighScore()
 
 	data.Finalize();
 }
-
-////当たり判定処理（プレイヤーと敵）
-//bool GameMainScene::IsHitCheck(Player* p, Enemy* e)
-//{
-//	////プレイヤーがバリアを貼っていたら、当たり判定を無視する
-//	//if (p->IsBarrier())
-//	//{
-//	//	return false;
-//	//}
-//
-//	//敵情報が無ければ、当たり判定を無視する
-//	if (e == nullptr)
-//	{
-//		return false;
-//	}
-//
-//	//位置情報の差分を取得
-//	Vector2D diff_location = p->GetLocation() - e->GetLocation();
-//
-//	//当たり判定サイズの大きさを取得
-//	Vector2D box_ex = p->GetBoxSize() + e->GetBoxSize();
-//
-//	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
-//	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
-//}
 
 
 //当たり判定処理（プレイヤーと敵）

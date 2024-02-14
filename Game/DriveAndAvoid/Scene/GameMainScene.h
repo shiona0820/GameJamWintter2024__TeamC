@@ -39,14 +39,20 @@ private:
 
 	int time;//アクション起きた時の時間を渡す用
 	bool flg;
-
+	int alpha;
+	int blackimg;//
 	int p1win;//勝ったら＋１
 	int p2win;
+	int p3win;
+	int starimg;
 
 	bool winflg;
-	
+	int whowin;//どっちが勝ったか
+
 
 public:
+	int static Wineer;
+
 	GameMainScene();
 	virtual ~GameMainScene();
 

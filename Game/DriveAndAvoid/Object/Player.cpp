@@ -236,41 +236,6 @@ void Player::Draw()
 		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
 	}
 
-	//switch (playerd)
-	//{
-	//case 0:
-	//	//左下
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
-	//	break;
-	//case 1:
-	//	//右下
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
-	//	break;
-	//case 2:
-	//	//左上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
-	//	break;
-	//case 3:
-	//	//右上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
-	//	break;
-	//case 4:
-	//	//右上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
-	//	break;
-	//default:
-	//	break;
-	//}
-	//DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
-	//DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
-	//攻撃のロケーション
-	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
-	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
-	//DrawFormatString(location.x, 300, GetColor(255, 255, 255), "DLx%f",DoorLlocation.x);
-	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
-
-
-	//DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
 }
 
 //終了処理

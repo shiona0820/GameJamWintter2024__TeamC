@@ -8,6 +8,7 @@ class Item
 private:
 	int coneimage;
 	int count;
+	int gWaitTime;
 
 	Vector2D location;
 

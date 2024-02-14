@@ -10,7 +10,7 @@ Item::Item()
 	{
 		cone[i].flg = FALSE;
 	}
-	
+	gWaitTime = 0;
 }
 
 //デストラクタ
@@ -50,7 +50,14 @@ void Item::Draw() const
 			//障害物（三角コーン）画像の描画
 			DrawRotaGraph(200*cone[i].x, 220*cone[i].y, 0.7, 0.0, coneimage, true);
 		}
-
+		for (int j = 0; j > 600; j++)
+		{
+			if (gWaitTime >= 600)
+			{
+				DeleteGraph(coneimage);
+			}
+		}
+		
 	}
 
 }

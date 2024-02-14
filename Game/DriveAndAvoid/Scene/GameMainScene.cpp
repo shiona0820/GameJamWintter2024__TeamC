@@ -4,7 +4,7 @@
 #include<math.h>
 
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
-barrier_image(NULL), mileage(0), player(nullptr), enemy(nullptr)
+barrier_image(NULL), mileage(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -27,7 +27,7 @@ void GameMainScene::Initialize()
 	//画像の読み込み
 	back_ground = LoadGraph("Resource/images/back.bmp");
 	barrier_image = LoadGraph("Resource/images/barrier.png");
-	int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);
+	/*int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);*/
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -35,10 +35,10 @@ void GameMainScene::Initialize()
 		throw("Resource/images/back.bmpがありません?n");
 	}
 
-	if (result == -1)
+	/*if (result == -1)
 	{
 		throw("Resource/images/car.bmpがありません\n");
-	}
+	}*/
 
 	if (barrier_image == -1)
 	{
@@ -47,78 +47,131 @@ void GameMainScene::Initialize()
 
 	//オブジェクトの生成
 	player = new Player;
+	player2 = new Player;
+
 	enemy = new Enemy* [10];
-	item = new Item;
+	Pcar = new Policecar;
 
 	//オブジェクトの初期化
-	player->Initialize();
+	player->Initialize(0,400);
+	player2->Initialize(1,200);
+
+	Pcar->Initialize();
 
 	for (int i = 0; i < 10; i++)
 	{
 		enemy[i] = nullptr;
 	}
+
+	//初期化
+	count = 0;
+	timer = 0;
+
 }
 
 //更新処理
 eSceneType GameMainScene::Update()
 {
+
+
 	//プレイヤーの更新
 	player->Update();
-	item->Update();
+	//プレイヤー２の更新
+	player2->Update();
 
 	//移動距離の更新
 	mileage += (int)player->GetSpeed() + 5;
 
-	//敵生成処理
-	if (mileage / 20 % 100 == 0)
+	/**
+	敵生成処理
+	countが60行ったら、timerが１増えてパトカーのｙが１増える
+	**/
+	count++;
+	if (count > 60)
 	{
-		for (int i = 0; i < 10; i++)
-		{
-			if (enemy[i] == nullptr)
-			{
-				int type = GetRand(3) % 3;
-				enemy[i] = new Enemy(type, enemy_image[type]);
-				enemy[i]->Initialize();
-				break;
-			}
-		}
+		count = 0;
+		timer++;
+		Pcar->Update();
 	}
-
-	//敵の更新と当たり判定チェック
-	for (int i = 0; i < 10; i++)
+	if (timer == 180)
 	{
-		if (enemy[i] != nullptr)
-		{
-			enemy[i]->Update(player->GetSpeed());
-
-			//画面外に行ったら、敵を削除してスコア加算
-			if (enemy[i] -> GetLocation().y >= 640.0f)
-			{
-				enemy_count[enemy[i]->GetType()]++;
-				enemy[i]->Finalize();
-				delete enemy[i];
-				enemy[i] = nullptr;
-			}
+		timer = 0;
+	}
 
 			//当たり判定の確認
-			if (IsHitCheck(player,enemy[i]))
+		//当たり判定の確認（プレイヤーとパトカー）
+			if (IsHitCheckPlayer(player,player2))
 			{
-				player -> SetActive(false);
-					player -> DecreaseHp(-50.0f);
-					enemy[i] -> Finalize();
-					delete enemy[i];
-					enemy[i] = nullptr;
-			}
-		}
-	}
 
-	//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
-	if (player -> GetFuel() < 0.0f || player -> GetHp() < 0.0f)
-	{
-		return eSceneType::E_RESULT;
-	}
-	return GetNowScene();
+				if (flg == false)
+				{
+					flg = true;
+				}
+
+				player->Exclusion(player2->GetLocation());
+				player2->Exclusion(player->GetLocation());
+
+				//当たった時、相手がどこに当たったかと相手がどこ向いているのか渡す
+				player->RepulsionX(player->GetLocation() - player2->GetLocation(),player2->GetDirection());
+				player2->RepulsionX(player2->GetLocation() - player->GetLocation(),player->GetDirection());
+
+
+			}
+
+
+			if (IsHitCheckP1(player,Pcar))
+			{
+				player->SetActive(false);
+			}
+
+			if (IsHitCheckP2(player2, Pcar))
+			{
+				player2->SetActive(false);
+			}
+
+
+			// ドアに当たると回転する(プレイヤー２)
+			if (IsHitDoorR(player, player2))
+			{
+				player2->SetActive(false);
+			}
+
+			if (IsHitDoorL(player, player2))
+			{
+				player2->SetActive(false);
+			}
+
+			// ドアに当たると回転する（プレイヤー１）
+			if (IsHitDoorR2(player, player2))
+			{
+				player->SetActive(false);
+			}
+
+			if (IsHitDoorL2(player, player2))
+			{
+				player->SetActive(false);
+			}
+
+				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
+			if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
+			{
+				return eSceneType::E_RESULT;
+			}
+			return GetNowScene();
 }
+
+
+			////当たり判定の確認
+			//if (IsHitCheck(player,enemy[i]))
+			//{
+			//	player -> SetActive(false);
+			//		player -> DecreaseHp(-50.0f);
+			//		enemy[i] -> Finalize();
+			//		delete enemy[i];
+			//		enemy[i] = nullptr;
+			//}
+			
+
 
 //描画処理
 void GameMainScene::Draw() const
@@ -138,9 +191,11 @@ void GameMainScene::Draw() const
 
 	//プレイヤーの描画
 	player->Draw();
+	//PAD2プレイヤーの描画
+	player2->Draw();
 
-	//アイテムの描画
-	item->Draw();
+	//パトカーの描画
+	Pcar->Draw();
 
 	//UIの描画
 	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);
@@ -159,6 +214,9 @@ void GameMainScene::Draw() const
 	DrawFormatString(555, 220, GetColor(255, 255, 255), "%08d", mileage / 10);
 	DrawFormatString(510, 240, GetColor(0, 0, 0), "スピード");
 	DrawFormatString(555, 260, GetColor(255, 255, 255), "%08.1f", player->GetSpeed());
+
+	DrawFormatString(200, 260, GetColor(255, 255, 255), "count%d", count);
+	DrawFormatString(200, 280, GetColor(255, 255, 255), "timer%d", timer);
 
 	//バリア枚数の描画
 	for (int i = 0; i < player -> GetBarriarCount(); i++)
@@ -218,6 +276,13 @@ void GameMainScene::Finalize()
 	//動的確保したオブジェクトを削除する
 	player->Finalize();
 	delete player;
+	
+	player2->Finalize();
+	delete player2;
+
+
+	Pcar->Finalize();
+	delete Pcar;
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -248,27 +313,138 @@ void GameMainScene::ReadHighScore()
 	data.Finalize();
 }
 
+////当たり判定処理（プレイヤーと敵）
+//bool GameMainScene::IsHitCheck(Player* p, Enemy* e)
+//{
+//	////プレイヤーがバリアを貼っていたら、当たり判定を無視する
+//	//if (p->IsBarrier())
+//	//{
+//	//	return false;
+//	//}
+//
+//	//敵情報が無ければ、当たり判定を無視する
+//	if (e == nullptr)
+//	{
+//		return false;
+//	}
+//
+//	//位置情報の差分を取得
+//	Vector2D diff_location = p->GetLocation() - e->GetLocation();
+//
+//	//当たり判定サイズの大きさを取得
+//	Vector2D box_ex = p->GetBoxSize() + e->GetBoxSize();
+//
+//	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+//	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+//}
+
+
 //当たり判定処理（プレイヤーと敵）
-bool GameMainScene::IsHitCheck(Player* p, Enemy* e)
+bool GameMainScene::IsHitCheckP1(Player* p, Policecar* car)
 {
-	//プレイヤーがバリアを貼っていたら、当たり判定を無視する
-	if (p->IsBarrier())
-	{
-		return false;
-	}
 
 	//敵情報が無ければ、当たり判定を無視する
-	if (e == nullptr)
+	if (car == nullptr)
 	{
 		return false;
 	}
 
 	//位置情報の差分を取得
-	Vector2D diff_location = p->GetLocation() - e->GetLocation();
+	Vector2D diff_location = p->GetLocation() - car->GetLocation();
 
 	//当たり判定サイズの大きさを取得
-	Vector2D box_ex = p->GetBoxSize() + e->GetBoxSize();
+	Vector2D box_ex = p->GetBoxSize() + car->GetBoxSize();
 
 	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+bool GameMainScene::IsHitCheckP2(Player* p2, Policecar* car)
+{
+
+	//敵情報が無ければ、当たり判定を無視する
+	if (car == nullptr)
+	{
+		return false;
+	}
+
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetLocation() - car->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetBoxSize() + car->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+bool GameMainScene::IsHitCheckPlayer(Player* p, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p->GetLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p->GetBoxSize()+p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤーのドアの当たり判定（右）
+bool GameMainScene::IsHitDoorR(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p1->GetDoorRLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p1->GetDoorRSize() + p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤーのドアの当たり判定（左）
+bool GameMainScene::IsHitDoorL(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p1->GetDoorLLocation() - p2->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p1->GetDoorLSize() + p2->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤー2のドアの当たり判定（右）
+bool GameMainScene::IsHitDoorR2(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetDoorRLocation() - p1->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetDoorRSize() + p1->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+// プレイヤー2のドアの当たり判定（左）
+bool GameMainScene::IsHitDoorL2(Player* p1, Player* p2)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetDoorLLocation() - p1->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetDoorLSize() + p1->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
 }

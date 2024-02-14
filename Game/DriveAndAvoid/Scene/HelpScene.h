@@ -5,7 +5,7 @@
 class HelpScene:public SceneBase
 {
 private:
-	int background_image;      //”wŒi‰æ‘œ
+	int help_image;      //”wŒi‰æ‘œ
 
 public:
 	HelpScene();

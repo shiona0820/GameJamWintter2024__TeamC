@@ -96,6 +96,7 @@ void Player::Update()
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
 	{
+		location.y++;
 		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
@@ -177,6 +178,8 @@ void Player::Draw()
 {
 
 	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
+	//プレイヤー画像の描画
+	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
 
 	if (Attackflg == false && exNum < 2)
 	{

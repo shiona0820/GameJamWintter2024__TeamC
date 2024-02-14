@@ -224,6 +224,12 @@ void Player::Draw()
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
 		// ドア描画
 		DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
 	else if (Attackflg == true && Xflg == true)
@@ -232,6 +238,12 @@ void Player::Draw()
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
 		// ドア描画
 		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	// 爆発アニメーションの描画
@@ -380,6 +392,17 @@ int Player::GetBarriarCount() const
 bool Player::IsBarrier() const
 {
 	return (barrier != nullptr);
+
+}
+
+// ボタンフラグを取得
+int Player::GetBflg() const
+{
+	return this->Bflg;
+}
+int Player::GetXflg() const
+{
+	return this->Xflg;
 }
 
 

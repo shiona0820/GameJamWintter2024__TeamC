@@ -4,6 +4,7 @@
 #include"../Object/Player.h"
 #include"../Object/Enemy.h"
 #include"../Object/Policecar.h"
+#include "../Item.h"
 
 
 class GameMainScene : public SceneBase
@@ -21,6 +22,11 @@ private:
 	Player* player2;     //プレイヤー2
 	Enemy** enemy;       //敵
 	Policecar* Pcar;     //パトカー
+	
+	Item* item[10];
+
+	int max, min;
+	
 	int count;          //６０回数える
 	int timer;          //countが６０になったら１数える
 	int ptimer;
@@ -57,4 +63,9 @@ private:
 	// ドアの当たり判定（プレイヤー２）
 	bool IsHitDoorR2(Player* p1, Player* p2);
 	bool IsHitDoorL2(Player* p1, Player* p2);
+
+	//アイテムの当たり判定
+	bool IsHitCheckItem(Player* p, Item* i);
+	bool IsHitItem(Player* p2, Item* i);
+
 };

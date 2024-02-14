@@ -132,17 +132,26 @@ eSceneType GameMainScene::Update()
 			{
 				player->SetActive(false);
 				player->DecreaseHp(-1000.0f);
-				player->Explosion();
 			}
 
 			if (IsHitCheckP2(player2, Pcar))
 			{
 				player2->SetActive(false);
 				player2->DecreaseHp(-1000.0f);
-				player2->Explosion();
 
 			}
 
+			// HP‚ª‚O‚É‚È‚Á‚½‚ç”š”­‚·‚é
+			if (player->GetHp() <= 0)
+			{
+				player->Explosion();
+
+			}
+			if (player2->GetHp() <= 0)
+			{
+				player2->Explosion();
+
+			}
 
 			//UŒ‚‚Ì“ü—Í‰Ÿ‚µ‚½‚Æ‚«‚¾‚¯”»’è‚É‚·‚é«
 			if (player->GetAttackflg() == TRUE)

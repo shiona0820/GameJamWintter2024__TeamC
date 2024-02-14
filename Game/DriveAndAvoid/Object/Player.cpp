@@ -573,7 +573,7 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 
 }
 
-
+// 爆発アニメーション
 void Player::Explosion()
 {
 	explosion_count++;
@@ -581,13 +581,10 @@ void Player::Explosion()
 	{
 	case(0):
 		exNum = 0;
-		break;
 	case(10):
 		exNum = 1;
-		break;
 	case(20):
 		exNum = 2;
-		break;
 	default:
 		break;
 	}

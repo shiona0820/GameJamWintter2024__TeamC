@@ -29,13 +29,19 @@ private:
 	int carRimg, carLimg, doorRimg, doorLimg;
 
 	int Attackflg;		// 攻撃フラグ
-	int Bflg, Xflg;
+	int Bflg, Xflg;		// 攻撃ボタンの判定用フラグ
+	//ドアの角度
 	float DoorRangle, DoorLangle, Door2Rangle, Door2Langle;
-	int Acount;
-	Vector2D DoorRlocation;   //ドアの位置座標
-	Vector2D DoorR_size;		//ドアの当たり判定の大きさ
-	Vector2D DoorLlocation;   //ドアの位置座標
-	Vector2D DoorL_size;		//ドアの当たり判定の大きさ
+	int Acount;		// ドアの描画用
+	Vector2D DoorRlocation;		//ドアの位置座標（右）
+	Vector2D DoorR_size;		//ドアの当たり判定の大きさ（右）
+	Vector2D DoorLlocation;		//ドアの位置座標（左）
+	Vector2D DoorL_size;		//ドアの当たり判定の大きさ（左）
+
+
+	int explosion_img[3];	// 爆発画像
+	int exNum;				// 爆発アニメーション描画用
+	int explosion_count;	// 爆発アニメーションカウント用
 
 public:
 	Player();
@@ -69,13 +75,14 @@ public:
 	//自分の車に侵入できなくする
 	void Exclusion(Vector2D loce);
 
+	// 爆発アニメーション
+	void Explosion();
 
+	Vector2D GetDoorRLocation() const;   //ドアの位置情報取得（右）
+	Vector2D GetDoorRSize() const;		 //ドアの当たり判定の大きさ取得（右）
 
-	Vector2D GetDoorRLocation() const;   //位置情報取得
-	Vector2D GetDoorRSize() const;    //当たり判定の大きさ取得
-
-	Vector2D GetDoorLLocation() const;   //位置情報取得
-	Vector2D GetDoorLSize() const;    //当たり判定の大きさ取得
+	Vector2D GetDoorLLocation() const;   //ドアの位置情報取得（左）
+	Vector2D GetDoorLSize() const;		 //ドアの当たり判定の大きさ取得（左）
 
 private:
 	void Movement();      //移動処理

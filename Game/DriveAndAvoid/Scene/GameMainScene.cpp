@@ -122,11 +122,16 @@ eSceneType GameMainScene::Update()
 			if (IsHitCheckP1(player,Pcar))
 			{
 				player->SetActive(false);
+				player->DecreaseHp(-1000.0f);
+				player->Explosion();
 			}
 
 			if (IsHitCheckP2(player2, Pcar))
 			{
 				player2->SetActive(false);
+				player2->DecreaseHp(-1000.0f);
+				player2->Explosion();
+
 			}
 
 
@@ -166,10 +171,10 @@ eSceneType GameMainScene::Update()
 			}
 
 				//ƒvƒŒƒCƒ„[‚Ì”R—¿‚©‘Ì—Í‚ª‚O–¢–ž‚È‚çAƒŠƒUƒ‹ƒg‚É‘JˆÚ‚·‚é
-			if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
+		/*	if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
 			{
 				return eSceneType::E_RESULT;
-			}
+			}*/
 			return GetNowScene();
 }
 

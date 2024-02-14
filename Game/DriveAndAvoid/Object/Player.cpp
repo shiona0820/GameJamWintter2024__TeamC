@@ -43,13 +43,17 @@ void Player::Initialize(int pnum,float x)
 
 	// プレイヤー１のドア（右）
 	DoorRlocation = Vector2D(x, 380.0f);
-	DoorR_size = Vector2D(18.0f, 15.0f);
+	DoorR_size = Vector2D(12.0f, 15.0f);
 
 	// プレイヤー１のドア（左）
 	DoorRlocation = Vector2D(x, 380.0f);
 	DoorR_size = Vector2D(35.0f, 15.0f);
 
 	alpha = 0;
+
+	// 爆発アニメーション用カウント
+	explosion_count = 0;
+	exNum = 0;
 
 	//画像の読み込み
 	if (pnum == 0)
@@ -71,6 +75,8 @@ void Player::Initialize(int pnum,float x)
 
 
 	}
+
+	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
 
 	crackimg = LoadGraph("Resource/images/crack.png");
 
@@ -121,7 +127,7 @@ void Player::Update()
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
 	{
 		DoorRlocation.x = location.x + 25;
-		DoorRlocation.y = location.y + 2;
+		DoorRlocation.y = location.y + 4;
 		Attackflg = true;
 		Bflg = true;
 		Acount = 0;
@@ -131,7 +137,7 @@ void Player::Update()
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
 	{
 		DoorLlocation.x = location.x - 55;
-		DoorLlocation.y = location.y + 2;
+		DoorLlocation.y = location.y + 4;
 		Attackflg = true;
 		Xflg = true;
 		Acount = 0;
@@ -170,7 +176,7 @@ void Player::Draw()
 
 	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
 
-	if (Attackflg == false)
+	if (Attackflg == false && exNum < 2)
 	{
 		//プレイヤー画像の描画
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
@@ -203,6 +209,12 @@ void Player::Draw()
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
 		// ドア描画
 		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
+	}
+
+	// 爆発アニメーションの描画
+	if (hp <= 0)
+	{
+		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
 	}
 
 	switch (playerd)
@@ -524,6 +536,27 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 		dire = d * 40;
 		location += dire;
 
+	}
+
+}
+
+
+void Player::Explosion()
+{
+	explosion_count++;
+	switch (explosion_count)
+	{
+	case(0):
+		exNum = 0;
+		break;
+	case(10):
+		exNum = 1;
+		break;
+	case(20):
+		exNum = 2;
+		break;
+	default:
+		break;
 	}
 
 }

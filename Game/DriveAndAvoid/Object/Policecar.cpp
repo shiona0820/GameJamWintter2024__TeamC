@@ -27,7 +27,7 @@ void Policecar::Initialize()
 	image = LoadGraph("Resource/images/car1car.png");
 
 	//“–‚½‚è”»’è‚Ìİ’è
-	box_size = Vector2D( 640.0f, 300.0f);
+	box_size = Vector2D( 640.0f,200.0f);
 	
 }
 

@@ -3,10 +3,8 @@
 #include"DxLib.h"
 #include<math.h>
 
-
-
-GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
-barrier_image(NULL), mileage(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
+GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0),
+audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -29,9 +27,8 @@ void GameMainScene::Initialize()
 	ReadHighScore();
 
 	//画像の読み込み
-	back_ground = LoadGraph("Resource/images/back.bmp");
-	barrier_image = LoadGraph("Resource/images/barrier.png");
-	/*int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);*/
+	back_ground = LoadGraph("Resource/images/back1.bmp");
+	audience_img = LoadGraph("Resource/images/audience.png");
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -44,9 +41,9 @@ void GameMainScene::Initialize()
 		throw("Resource/images/car.bmpがありません\n");
 	}*/
 
-	if (barrier_image == -1)
+	if (audience_img == -1)
 	{
-		throw("Resource/images/barrier.pngがありません?n");
+		throw("Resource/images/audience.pngがありません?");
 	}
 
 	//オブジェクトの生成
@@ -107,7 +104,8 @@ eSceneType GameMainScene::Update()
 	}
 
 	//移動距離の更新
-	mileage += (int)player->GetSpeed() + 5;
+	mileage += 15;
+	mileage2 += 2;
 
 	/**
 	敵生成処理
@@ -118,11 +116,27 @@ eSceneType GameMainScene::Update()
 	{
 		count = 0;
 		timer++;
+		ptimer++;
+		ptimer2++;
 		Pcar->Update();
 	}
 	if (timer == 180)
 	{
 		timer = 0;
+	}
+
+	//プレイヤーがダメージ食らった無敵時間
+	if (ptimer > 3)
+	{
+		player2->Hitflg(false);
+		ptimer= 0;
+	}
+
+	//プレイヤーがダメージ食らった無敵時間
+	if (ptimer2 > 3)
+	{
+		player->Hitflg(false);
+		ptimer2 = 0;
 	}
 
 			//当たり判定の確認
@@ -145,38 +159,80 @@ eSceneType GameMainScene::Update()
 
 			}
 
-
+			//プレイヤー１とパトカーの当たり判定
 			if (IsHitCheckP1(player,Pcar))
 			{
 				player->SetActive(false);
+				player->DecreaseHp(-1000.0f);
 			}
 
 			if (IsHitCheckP2(player2, Pcar))
 			{
 				player2->SetActive(false);
+				player2->DecreaseHp(-1000.0f);
+
 			}
 
-
-			// ドアに当たると回転する(プレイヤー２)
-			if (IsHitDoorR(player, player2))
+			// HPが０になったら爆発する
+			if (player->GetHp() <= 0)
 			{
-				player2->SetActive(false);
+				player->Explosion();
+
+			}
+			if (player2->GetHp() <= 0)
+			{
+				player2->Explosion();
+
 			}
 
-			if (IsHitDoorL(player, player2))
+			//攻撃の入力押したときだけ判定にする↓
+			if (player->GetAttackflg() == TRUE)
 			{
-				player2->SetActive(false);
+				//プレイヤー１の攻撃
+				// ドアに当たると回転する(プレイヤー２)
+				if (player2->GetHitflg() == false) {
+					if (IsHitDoorR(player, player2))
+					{
+						if (player2->GetHitflg() == false)
+						{
+							ptimer2 = 0;
+							player2->DecreaseHp(-100);
+							player2->SetActive(false);
+						}
+					}
+
+					if (IsHitDoorL(player, player2))
+					{
+						if (player2->GetHitflg() == false)
+						{
+							ptimer2 = 0;
+							player2->DecreaseHp(-100);
+							player2->SetActive(false);
+						}
+					}
+				}
+
 			}
 
-			// ドアに当たると回転する（プレイヤー１）
-			if (IsHitDoorR2(player, player2))
+			if (player2->GetAttackflg() == TRUE)
 			{
-				player->SetActive(false);
-			}
+				//プレイヤー２の攻撃
+				// ドアに当たると回転する（プレイヤー１）
+				if (player->GetHitflg() == false) {
+					if (IsHitDoorR2(player, player2))
+					{
+						ptimer = 0;
+						player->DecreaseHp(-100);
+						player->SetActive(false);
+					}
 
-			if (IsHitDoorL2(player, player2))
-			{
-				player->SetActive(false);
+					if (IsHitDoorL2(player, player2))
+					{
+						ptimer = 0;
+						player->DecreaseHp(-100);
+						player->SetActive(false);
+					}
+				}
 			}
 
 
@@ -215,11 +271,12 @@ eSceneType GameMainScene::Update()
 			}
 
 				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
-			if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
+		/*	if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
 			{
 				return eSceneType::E_RESULT;
-			}
+			}*/
 			return GetNowScene();
+
 }
 
 
@@ -239,8 +296,14 @@ eSceneType GameMainScene::Update()
 void GameMainScene::Draw() const
 {
 	//背景画像の描画
-	DrawGraph(0, mileage % 480 - 480, back_ground, TRUE);
-	DrawGraph(0, mileage % 480, back_ground, TRUE);
+	DrawGraph(0, mileage % 720 - 720, back_ground, TRUE);
+	DrawGraph(0, mileage % 720, back_ground, TRUE);
+
+	//観客の描画
+	DrawGraph(1160, mileage2%720-720, audience_img, TRUE);
+	DrawGraph(1160, mileage2%720, audience_img, TRUE);
+	DrawTurnGraph(-80, mileage2%720-720, audience_img, TRUE);
+	DrawTurnGraph(-80, mileage2%720, audience_img, TRUE);
 
 	//敵の描画
 

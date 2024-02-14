@@ -3,10 +3,9 @@
 #include"DxLib.h"
 #include<math.h>
 
-int ax=0;
 
 Player::Player() : is_active(false), image(NULL), location(0.0f), box_size(0.0f),
-angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr)
+angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr),alpha(0)
 {
 	playerd = 0;
 	playernum = 0;
@@ -20,13 +19,12 @@ Player::~Player()
 //初期化処理
 void Player::Initialize(int pnum,float x)
 {
-	ax = x;
 	is_active = true;
 	location = Vector2D(x, 380.0f);
 	box_size = Vector2D(31.0f, 60.0f);
 	angle = 0.0f;
 	speed = 3.0f;
-	hp = 1000;
+	hp = 600;
 	fuel = 20000;
 	barrier_count = 3;
 	playernum = pnum;
@@ -36,6 +34,7 @@ void Player::Initialize(int pnum,float x)
 	Bflg = false;
 	Xflg = false;
 	Attackflg = false;
+	hit_flg = false;
 	DoorRangle = 0.0f;
 	DoorLangle = 0.0f;
 	Door2Rangle = 0.0f;
@@ -43,11 +42,18 @@ void Player::Initialize(int pnum,float x)
 
 	// プレイヤー１のドア（右）
 	DoorRlocation = Vector2D(x, 380.0f);
-	DoorR_size = Vector2D(18.0f, 15.0f);
+	DoorR_size = Vector2D(10.0f, 15.0f);
 
 	// プレイヤー１のドア（左）
 	DoorRlocation = Vector2D(x, 380.0f);
 	DoorR_size = Vector2D(35.0f, 15.0f);
+
+	alpha = 0;
+	hpcheck = 0;
+
+	// 爆発アニメーション用カウント
+	explosion_count = 0;
+	exNum = 0;
 
 	//画像の読み込み
 	if (pnum == 0)
@@ -70,6 +76,9 @@ void Player::Initialize(int pnum,float x)
 
 	}
 
+	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
+
+	crackimg = LoadGraph("Resource/images/crack.png");
 
 	//エラーチェック
 	if (image == -1)
@@ -81,10 +90,13 @@ void Player::Initialize(int pnum,float x)
 //更新処理
 void Player::Update()
 {
+	//hpの値をもらう
+	hpcheck = hp;
+
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
 	{
-		Attackflg = false;
+		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
@@ -96,8 +108,9 @@ void Player::Update()
 		return;
 	}
 
-	//燃料の消費
-	fuel -= speed;
+	////燃料の消費
+	//fuel -= speed;
+	
 
 	//移動処理
 	Movement();
@@ -113,8 +126,8 @@ void Player::Update()
 	//攻撃処理（右）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
 	{
-		DoorRlocation.x = location.x + 25;
-		DoorRlocation.y = location.y + 2;
+		//DoorRlocation.x = location.x + 25;
+		//DoorRlocation.y = location.y + 4;
 		Attackflg = true;
 		Bflg = true;
 		Acount = 0;
@@ -123,8 +136,8 @@ void Player::Update()
 	//攻撃処理（左）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
 	{
-		DoorLlocation.x = location.x - 55;
-		DoorLlocation.y = location.y + 2;
+		//DoorLlocation.x = location.x - 55;
+		//DoorLlocation.y = location.y + 4;
 		Attackflg = true;
 		Xflg = true;
 		Acount = 0;
@@ -145,16 +158,18 @@ void Player::Update()
 	}
 
 
-	//バリアが生成されていたら、更新を行う
-	if (barrier != nullptr)
-	{
-		//バリア時間が経過したか？していたら、削除する
-		if (barrier->IsFinished(this->speed))
-		{
-			delete barrier;
-			barrier = nullptr;
-		}
-	}
+	DoorRlocation.x = location.x + 25;
+	DoorRlocation.y = location.y + 4;
+	DoorLlocation.x = location.x - 55;
+	DoorLlocation.y = location.y + 4;
+
+
+	//透けるやつ
+	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
+	//爆発
+	//攻撃くらったらHP減る関数とHPの変数を作る
+
+
 }
 
 //描画処理
@@ -163,10 +178,18 @@ void Player::Draw()
 
 	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
 
-	if (Attackflg == false)
+	if (Attackflg == false && exNum < 2)
 	{
 		//プレイヤー画像の描画
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	}
 	else if (Attackflg == true && Bflg == true)
 	{
@@ -185,33 +208,47 @@ void Player::Draw()
 		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
 	}
 
-	switch (playerd)
+	// 爆発アニメーションの描画
+	if (hp <= 0)
 	{
-	case 0:
-		//左下
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
-		break;
-	case 1:
-		//右下
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
-		break;
-	case 2:
-		//左上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
-
-		break;
-	case 3:
-		//右上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
-		break;
-	case 4:
-		//右上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
-		break;
-	default:
-		break;
+		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
 	}
 
+	//switch (playerd)
+	//{
+	//case 0:
+	//	//左下
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
+	//	break;
+	//case 1:
+	//	//右下
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
+	//	break;
+	//case 2:
+	//	//左上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
+	//	break;
+	//case 3:
+	//	//右上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
+	//	break;
+	//case 4:
+	//	//右上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
+	//	break;
+	//default:
+	//	break;
+	//}
+	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
+	DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
+	//攻撃のロケーション
+	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
+	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
+	//DrawFormatString(location.x, 300, GetColor(255, 255, 255), "DLx%f",DoorLlocation.x);
+	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
+
+
+	DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
 }
 
 //終了処理
@@ -236,7 +273,21 @@ void Player::SetActive(bool flg)
 //体力減少処理
 void Player::DecreaseHp(float value)
 {
-	this->hp += value;
+
+		hit_flg = true;
+		this->hp += value;
+		alpha += 42.5;
+	
+}
+
+bool Player::GetHitflg() const
+{
+	return this->hit_flg;
+}
+
+void Player::Hitflg(bool flg)
+{
+	hit_flg = flg;
 }
 
 //位置情報取得処理
@@ -276,6 +327,12 @@ Vector2D Player::GetDoorLSize() const
 }
 
 
+//プレイヤー１のドア当たり判定の大きさ取得処理（左）
+int Player::GetAttackflg() const
+{
+	return this->Attackflg;
+}
+
 //速さ取得処理
 float Player::GetSpeed() const
 {
@@ -306,6 +363,7 @@ bool Player::IsBarrier() const
 	return (barrier != nullptr);
 }
 
+
 //移動処理
 void Player::Movement()
 {
@@ -332,18 +390,33 @@ void Player::Movement()
 		direction = Vector2D(0.0f, 1.0f);
 	}
 
-	location += direction;
+	location += direction*2;
 
-	//画面外に行かないように制限する
-	if ((location.x < box_size.x) || (location.x >= 1280.0f - 180.0f) || 
-		(location.y < box_size.y) || (location.y >= 720.0f - box_size.y))
+
+	if (location.x >= 1280)
 	{
-		location -= direction;
+		location.x = 1280;
 	}
 
-	if (location.x > 1280 || location.x < 0)
+	//観客のところに入ったらスピードが減る右
+	if ((location.x < 120) || (location.x >= 1160.0f))
+	{
+		location -= direction;
+
+	}
+
+	//画面外に出ないように
+	if (location.x < 0)
 	{
 		location.x = 100;
+	}
+	if (location.x > 1280)
+	{
+		location.x = 1000;
+	}
+	if (location.y < 0)
+	{
+		location.y = 100;
 	}
 
 }
@@ -472,6 +545,29 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 		}
 	}
 
-	
+	if (dire.x == 0 && dire.y == 0)
+	{
+		dire = d * 40;
+		location += dire;
+
+	}
+
+}
+
+// 爆発アニメーション
+void Player::Explosion()
+{
+	explosion_count++;
+	switch (explosion_count)
+	{
+	case(0):
+		exNum = 0;
+	case(10):
+		exNum = 1;
+	case(20):
+		exNum = 2;
+	default:
+		break;
+	}
 
 }

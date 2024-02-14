@@ -21,17 +21,30 @@ private:
 	int playerd;//どこに当たったかの格納
 	Vector2D dire;//計算用
 
+	int crackimg;//車のひび画像用
+	int alpha;//ひびを透かす用
+	int hpcheck;
+
+	bool hit_flg;//攻撃があたったら
+	bool death_flg;//負けフラグ
+
 	// 攻撃時の画像
 	int carRimg, carLimg, doorRimg, doorLimg;
 
 	int Attackflg;		// 攻撃フラグ
-	int Bflg, Xflg;
+	int Bflg, Xflg;		// 攻撃ボタンの判定用フラグ
+	//ドアの角度
 	float DoorRangle, DoorLangle, Door2Rangle, Door2Langle;
-	int Acount;
-	Vector2D DoorRlocation;   //ドアの位置座標
-	Vector2D DoorR_size;		//ドアの当たり判定の大きさ
-	Vector2D DoorLlocation;   //ドアの位置座標
-	Vector2D DoorL_size;		//ドアの当たり判定の大きさ
+	int Acount;		// ドアの描画用
+	Vector2D DoorRlocation;		//ドアの位置座標（右）
+	Vector2D DoorR_size;		//ドアの当たり判定の大きさ（右）
+	Vector2D DoorLlocation;		//ドアの位置座標（左）
+	Vector2D DoorL_size;		//ドアの当たり判定の大きさ（左）
+
+
+	int explosion_img[3];	// 爆発画像
+	int exNum;				// 爆発アニメーション描画用
+	int explosion_count;	// 爆発アニメーションカウント用
 
 public:
 	Player();
@@ -45,6 +58,7 @@ public:
 public:
 	void SetActive(bool flg);          //有効フラグ設定
 	void DecreaseHp(float value);       //体力減少処理
+	void Hitflg(bool flg);//攻撃が当たってない状態かをもらう
 	Vector2D GetLocation() const;   //位置情報取得
 	Vector2D GetDirection() const;   //向き情報取得
 	Vector2D GetBoxSize() const;    //当たり判定の大きさ取得
@@ -53,6 +67,9 @@ public:
 	float GetHp() const;            //体力取得
 	int GetBarriarCount() const;         //バリアの枚数取得
 	bool IsBarrier() const;         //バリア有効かを取得
+	bool GetHitflg() const;//HPを減らすのを一回だけにする用
+
+	int GetAttackflg() const;//アタックフラグを返す
 
 	//void direction(Vector2D xy);			//どこに当たったか調べる
 	void RepulsionX(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用左右
@@ -62,12 +79,14 @@ public:
 	//自分の車に侵入できなくする
 	void Exclusion(Vector2D loce);
 
+	// 爆発アニメーション
+	void Explosion();
 
-	Vector2D GetDoorRLocation() const;   //位置情報取得
-	Vector2D GetDoorRSize() const;    //当たり判定の大きさ取得
+	Vector2D GetDoorRLocation() const;   //ドアの位置情報取得（右）
+	Vector2D GetDoorRSize() const;		 //ドアの当たり判定の大きさ取得（右）
 
-	Vector2D GetDoorLLocation() const;   //位置情報取得
-	Vector2D GetDoorLSize() const;    //当たり判定の大きさ取得
+	Vector2D GetDoorLLocation() const;   //ドアの位置情報取得（左）
+	Vector2D GetDoorLSize() const;		 //ドアの当たり判定の大きさ取得（左）
 
 private:
 	void Movement();      //移動処理

@@ -12,8 +12,10 @@ class GameMainScene : public SceneBase
 private:
 	int high_score;     //ƒnƒCƒXƒRƒA
 	int back_ground;    //”wŒi‰æ‘œ
-	int barrier_image;  //ƒoƒŠƒA‰æ‘œ
-	int mileage;        //‘–s‹——£
+	int audience_img;	//ŠÏ‹q‰æ‘œ
+
+	int mileage;        //”wŒi‰æ‘œ‚ğ“®‚©‚·‚æ‚¤
+	int mileage2;        //ŠÏ‹q‰æ‘œ“®‚©‚·—p
 	int enemy_image[3]; //“G‰æ‘œ
 	int enemy_count[3]; //’Ê‚è‰ß‚¬‚½“GƒJƒEƒ“ƒg
 	Player* player;     //ƒvƒŒƒCƒ„[
@@ -27,6 +29,8 @@ private:
 	
 	int count;          //‚U‚O‰ñ”‚¦‚é
 	int timer;          //count‚ª‚U‚O‚É‚È‚Á‚½‚ç‚P”‚¦‚é
+	int ptimer;
+	int ptimer2;
 
 	int time;//ƒAƒNƒVƒ‡ƒ“‹N‚«‚½‚ÌŠÔ‚ğ“n‚·—p
 	bool flg;

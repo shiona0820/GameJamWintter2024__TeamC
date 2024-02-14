@@ -23,7 +23,10 @@ private:
 
 	int crackimg;//車のひび画像用
 	int alpha;//ひびを透かす用
+	int hpcheck;
 
+	bool hit_flg;//攻撃があたったら
+	bool death_flg;//負けフラグ
 
 	// 攻撃時の画像
 	int carRimg, carLimg, doorRimg, doorLimg;
@@ -55,6 +58,7 @@ public:
 public:
 	void SetActive(bool flg);          //有効フラグ設定
 	void DecreaseHp(float value);       //体力減少処理
+	void Hitflg(bool flg);//攻撃が当たってない状態かをもらう
 	Vector2D GetLocation() const;   //位置情報取得
 	Vector2D GetDirection() const;   //向き情報取得
 	Vector2D GetBoxSize() const;    //当たり判定の大きさ取得
@@ -63,9 +67,9 @@ public:
 	float GetHp() const;            //体力取得
 	int GetBarriarCount() const;         //バリアの枚数取得
 	bool IsBarrier() const;         //バリア有効かを取得
+	bool GetHitflg() const;//HPを減らすのを一回だけにする用
 
 	int GetAttackflg() const;//アタックフラグを返す
-	void DownHP();//攻撃に当たった時HPを減らす
 
 	//void direction(Vector2D xy);			//どこに当たったか調べる
 	void RepulsionX(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用左右

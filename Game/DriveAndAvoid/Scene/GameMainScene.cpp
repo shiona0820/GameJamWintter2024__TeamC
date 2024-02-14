@@ -3,7 +3,7 @@
 #include"DxLib.h"
 #include<math.h>
 
-GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
+GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),
 audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
@@ -91,12 +91,21 @@ eSceneType GameMainScene::Update()
 	{
 		count = 0;
 		timer++;
+		ptimer++;
 		Pcar->Update();
 	}
 	if (timer == 180)
 	{
 		timer = 0;
 	}
+
+	//プレイヤーがダメージ食らった無敵時間
+	if (ptimer > 3)
+	{
+		player2->Hitflg(false);
+		ptimer= 0;
+	}
+
 
 			//当たり判定の確認
 		//当たり判定の確認（プレイヤーとパトカー）
@@ -136,20 +145,30 @@ eSceneType GameMainScene::Update()
 
 
 			//攻撃の入力押したときだけ判定にする↓
-
 			if (player->GetAttackflg() == TRUE)
 			{
 				//プレイヤー１の攻撃
 				// ドアに当たると回転する(プレイヤー２)
+				if (player2->GetHitflg() == false) {
+					if (IsHitDoorR(player, player2))
+					{
+						if (player2->GetHitflg() == false)
+						{
+							ptimer = 0;
+							player2->DecreaseHp(-100);
+							player2->SetActive(false);
+						}
+					}
 
-				if (IsHitDoorR(player, player2))
-				{
-					player2->SetActive(false);
-				}
-
-				if (IsHitDoorL(player, player2))
-				{
-					player2->SetActive(false);
+					if (IsHitDoorL(player, player2))
+					{
+						if (player2->GetHitflg() == false)
+						{
+							ptimer = 0;
+							player2->DecreaseHp(-100);
+							player2->SetActive(false);
+						}
+					}
 				}
 
 			}
@@ -158,17 +177,24 @@ eSceneType GameMainScene::Update()
 			{
 				//プレイヤー２の攻撃
 				// ドアに当たると回転する（プレイヤー１）
-				if (IsHitDoorR2(player, player2))
-				{
-					
-					player->SetActive(false);
-				}
+				if (player->GetHitflg() == false) {
+					if (IsHitDoorR2(player, player2))
+					{
+						ptimer = 0;
+						player->DecreaseHp(-100);
+						player->SetActive(false);
+					}
 
-				if (IsHitDoorL2(player, player2))
-				{
-					player->SetActive(false);
+					if (IsHitDoorL2(player, player2))
+					{
+						ptimer = 0;
+						player->DecreaseHp(-100);
+						player->SetActive(false);
+					}
 				}
 			}
+
+
 
 				//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 		/*	if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
@@ -176,6 +202,7 @@ eSceneType GameMainScene::Update()
 				return eSceneType::E_RESULT;
 			}*/
 			return GetNowScene();
+
 }
 
 

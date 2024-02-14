@@ -23,6 +23,7 @@ private:
 	Policecar* Pcar;     //パトカー
 	int count;          //６０回数える
 	int timer;          //countが６０になったら１数える
+	int ptimer;
 
 	int time;//アクション起きた時の時間を渡す用
 	bool flg;

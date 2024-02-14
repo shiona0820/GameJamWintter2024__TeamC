@@ -10,6 +10,11 @@
 class GameMainScene : public SceneBase
 {
 private:
+	bool startflg;		// ゲーム開始フラグ
+	int starttimer;		// ゲーム開始時のカウントダウン用
+	int number_img[3];
+	int startnum;
+
 	int high_score;     //ハイスコア
 	int back_ground;    //背景画像
 	int audience_img;	//観客画像

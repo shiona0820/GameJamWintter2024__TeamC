@@ -42,7 +42,7 @@ void Player::Initialize(int pnum,float x)
 
 	// プレイヤー１のドア（右）
 	DoorRlocation = Vector2D(x, 380.0f);
-	DoorR_size = Vector2D(12.0f, 15.0f);
+	DoorR_size = Vector2D(10.0f, 15.0f);
 
 	// プレイヤー１のドア（左）
 	DoorRlocation = Vector2D(x, 380.0f);
@@ -126,8 +126,8 @@ void Player::Update()
 	//攻撃処理（右）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
 	{
-		DoorRlocation.x = location.x + 25;
-		DoorRlocation.y = location.y + 4;
+		//DoorRlocation.x = location.x + 25;
+		//DoorRlocation.y = location.y + 4;
 		Attackflg = true;
 		Bflg = true;
 		Acount = 0;
@@ -136,8 +136,8 @@ void Player::Update()
 	//攻撃処理（左）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
 	{
-		DoorLlocation.x = location.x - 55;
-		DoorLlocation.y = location.y + 4;
+		//DoorLlocation.x = location.x - 55;
+		//DoorLlocation.y = location.y + 4;
 		Attackflg = true;
 		Xflg = true;
 		Acount = 0;
@@ -157,44 +157,18 @@ void Player::Update()
 		}
 	}
 
+
+	DoorRlocation.x = location.x + 25;
+	DoorRlocation.y = location.y + 4;
+	DoorLlocation.x = location.x - 55;
+	DoorLlocation.y = location.y + 4;
+
+
 	//透けるやつ
 	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
 	//爆発
 	//攻撃くらったらHP減る関数とHPの変数を作る
 
-		//透かし
-	//switch (hpcheck)
-	//{
-	//case 600:
-	//	alpha = 0;
-	//	break;
-	//case 500:
-	//	alpha += 42.5;
-	//	break;
-	//case 400:
-	//	alpha += 42.5;
-	//	break;
-	//case 300:
-	//	break;
-	//case 200:
-	//	break;
-	//case 100:
-	//	break;
-	//case 0:
-	//	alpha = 255;
-	//	break;
-	//}
-
-	////バリアが生成されていたら、更新を行う
-	//if (barrier != nullptr)
-	//{
-	//	//バリア時間が経過したか？していたら、削除する
-	//	if (barrier->IsFinished(this->speed))
-	//	{
-	//		delete barrier;
-	//		barrier = nullptr;
-	//	}
-	//}
 
 }
 
@@ -252,34 +226,41 @@ void Player::Draw()
 		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
 	}
 
-	switch (playerd)
-	{
-	case 0:
-		//左下
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
-		break;
-	case 1:
-		//右下
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
-		break;
-	case 2:
-		//左上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
+	//switch (playerd)
+	//{
+	//case 0:
+	//	//左下
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
+	//	break;
+	//case 1:
+	//	//右下
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
+	//	break;
+	//case 2:
+	//	//左上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
+	//	break;
+	//case 3:
+	//	//右上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
+	//	break;
+	//case 4:
+	//	//右上
+	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
+	//	break;
+	//default:
+	//	break;
+	//}
+	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
+	DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
+	//攻撃のロケーション
+	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
+	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
+	//DrawFormatString(location.x, 300, GetColor(255, 255, 255), "DLx%f",DoorLlocation.x);
+	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
 
-		break;
-	case 3:
-		//右上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
-		break;
-	case 4:
-		//右上
-		DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
-		break;
-	default:
-		break;
-	}
-	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",hp);
 
+	DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
 }
 
 //終了処理

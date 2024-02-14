@@ -24,6 +24,7 @@ private:
 	int count;          //‚U‚O‰ñ”‚¦‚é
 	int timer;          //count‚ª‚U‚O‚É‚È‚Á‚½‚ç‚P”‚¦‚é
 	int ptimer;
+	int ptimer2;
 
 	int time;//ƒAƒNƒVƒ‡ƒ“‹N‚«‚½‚ÌŠÔ‚ğ“n‚·—p
 	bool flg;

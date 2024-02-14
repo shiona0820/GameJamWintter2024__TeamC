@@ -3,7 +3,7 @@
 #include"DxLib.h"
 #include<math.h>
 
-GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),
+GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0),
 audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
@@ -92,6 +92,7 @@ eSceneType GameMainScene::Update()
 		count = 0;
 		timer++;
 		ptimer++;
+		ptimer2++;
 		Pcar->Update();
 	}
 	if (timer == 180)
@@ -106,6 +107,12 @@ eSceneType GameMainScene::Update()
 		ptimer= 0;
 	}
 
+	//プレイヤーがダメージ食らった無敵時間
+	if (ptimer2 > 3)
+	{
+		player->Hitflg(false);
+		ptimer2 = 0;
+	}
 
 			//当たり判定の確認
 		//当たり判定の確認（プレイヤーとパトカー）
@@ -163,7 +170,7 @@ eSceneType GameMainScene::Update()
 					{
 						if (player2->GetHitflg() == false)
 						{
-							ptimer = 0;
+							ptimer2 = 0;
 							player2->DecreaseHp(-100);
 							player2->SetActive(false);
 						}
@@ -173,7 +180,7 @@ eSceneType GameMainScene::Update()
 					{
 						if (player2->GetHitflg() == false)
 						{
-							ptimer = 0;
+							ptimer2 = 0;
 							player2->DecreaseHp(-100);
 							player2->SetActive(false);
 						}

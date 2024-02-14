@@ -3,10 +3,9 @@
 #include"DxLib.h"
 #include<math.h>
 
-int ax=0;
 
 Player::Player() : is_active(false), image(NULL), location(0.0f), box_size(0.0f),
-angle(0.0f), speed(0.0f), hp(100.0f), fuel(0.0f), barrier_count(0), barrier(nullptr),alpha(0)
+angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr),alpha(0)
 {
 	playerd = 0;
 	playernum = 0;
@@ -20,13 +19,12 @@ Player::~Player()
 //初期化処理
 void Player::Initialize(int pnum,float x)
 {
-	ax = x;
 	is_active = true;
 	location = Vector2D(x, 380.0f);
 	box_size = Vector2D(31.0f, 60.0f);
 	angle = 0.0f;
 	speed = 3.0f;
-	hp = 1000;
+	hp = 600;
 	fuel = 20000;
 	barrier_count = 3;
 	playernum = pnum;
@@ -36,6 +34,7 @@ void Player::Initialize(int pnum,float x)
 	Bflg = false;
 	Xflg = false;
 	Attackflg = false;
+	hit_flg = false;
 	DoorRangle = 0.0f;
 	DoorLangle = 0.0f;
 	Door2Rangle = 0.0f;
@@ -50,6 +49,7 @@ void Player::Initialize(int pnum,float x)
 	DoorR_size = Vector2D(35.0f, 15.0f);
 
 	alpha = 0;
+	hpcheck = 0;
 
 	//画像の読み込み
 	if (pnum == 0)
@@ -84,10 +84,13 @@ void Player::Initialize(int pnum,float x)
 //更新処理
 void Player::Update()
 {
+	//hpの値をもらう
+	hpcheck = hp;
+
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
 	{
-		Attackflg = false;
+		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
@@ -101,9 +104,6 @@ void Player::Update()
 
 	////燃料の消費
 	//fuel -= speed;
-
-	//透かし
-	alpha++;
 	
 
 	//移動処理
@@ -151,17 +151,45 @@ void Player::Update()
 		}
 	}
 
+	//透けるやつ
+	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
+	//爆発
+	//攻撃くらったらHP減る関数とHPの変数を作る
 
-	//バリアが生成されていたら、更新を行う
-	if (barrier != nullptr)
-	{
-		//バリア時間が経過したか？していたら、削除する
-		if (barrier->IsFinished(this->speed))
-		{
-			delete barrier;
-			barrier = nullptr;
-		}
-	}
+		//透かし
+	//switch (hpcheck)
+	//{
+	//case 600:
+	//	alpha = 0;
+	//	break;
+	//case 500:
+	//	alpha += 42.5;
+	//	break;
+	//case 400:
+	//	alpha += 42.5;
+	//	break;
+	//case 300:
+	//	break;
+	//case 200:
+	//	break;
+	//case 100:
+	//	break;
+	//case 0:
+	//	alpha = 255;
+	//	break;
+	//}
+
+	////バリアが生成されていたら、更新を行う
+	//if (barrier != nullptr)
+	//{
+	//	//バリア時間が経過したか？していたら、削除する
+	//	if (barrier->IsFinished(this->speed))
+	//	{
+	//		delete barrier;
+	//		barrier = nullptr;
+	//	}
+	//}
+
 }
 
 //描画処理
@@ -174,11 +202,6 @@ void Player::Draw()
 	{
 		//プレイヤー画像の描画
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
-
-
-		//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
-		//爆発
-		//攻撃くらったらHP減る関数とHPの変数を作る
 
 		//画像を透かす
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
@@ -231,6 +254,7 @@ void Player::Draw()
 	default:
 		break;
 	}
+	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",hp);
 
 }
 
@@ -256,7 +280,21 @@ void Player::SetActive(bool flg)
 //体力減少処理
 void Player::DecreaseHp(float value)
 {
-	this->hp += value;
+
+		hit_flg = true;
+		this->hp += value;
+		alpha += 42.5;
+	
+}
+
+bool Player::GetHitflg() const
+{
+	return this->hit_flg;
+}
+
+void Player::Hitflg(bool flg)
+{
+	hit_flg = flg;
 }
 
 //位置情報取得処理
@@ -332,11 +370,6 @@ bool Player::IsBarrier() const
 	return (barrier != nullptr);
 }
 
-//
-void Player::DownHP()
-{
-	hp -= 10;
-}
 
 //移動処理
 void Player::Movement()

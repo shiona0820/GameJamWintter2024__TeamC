@@ -6,7 +6,7 @@
 int ax=0;
 
 Player::Player() : is_active(false), image(NULL), location(0.0f), box_size(0.0f),
-angle(0.0f), speed(0.0f), hp(0.0f), fuel(0.0f), barrier_count(0), barrier(nullptr)
+angle(0.0f), speed(0.0f), hp(100.0f), fuel(0.0f), barrier_count(0), barrier(nullptr),alpha(0)
 {
 	playerd = 0;
 	playernum = 0;
@@ -99,8 +99,8 @@ void Player::Update()
 		return;
 	}
 
-	//燃料の消費
-	fuel -= speed;
+	////燃料の消費
+	//fuel -= speed;
 
 	//透かし
 	alpha++;
@@ -332,6 +332,12 @@ bool Player::IsBarrier() const
 	return (barrier != nullptr);
 }
 
+//
+void Player::DownHP()
+{
+	hp -= 10;
+}
+
 //移動処理
 void Player::Movement()
 {
@@ -358,18 +364,33 @@ void Player::Movement()
 		direction = Vector2D(0.0f, 1.0f);
 	}
 
-	location += direction;
+	location += direction*2;
 
-	//画面外に行かないように制限する
-	if ((location.x < box_size.x) || (location.x >= 1280.0f - 180.0f) || 
-		(location.y < box_size.y) || (location.y >= 720.0f - box_size.y))
+
+	if (location.x >= 1280)
 	{
-		location -= direction;
+		location.x = 1280;
 	}
 
-	if (location.x > 1280 || location.x < 0)
+	//観客のところに入ったらスピードが減る右
+	if ((location.x < 120) || (location.x >= 1160.0f))
+	{
+		location -= direction;
+
+	}
+
+	//画面外に出ないように
+	if (location.x < 0)
 	{
 		location.x = 100;
+	}
+	if (location.x > 1280)
+	{
+		location.x = 1000;
+	}
+	if (location.y < 0)
+	{
+		location.y = 100;
 	}
 
 }
@@ -498,6 +519,11 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 		}
 	}
 
-	
+	if (dire.x == 0 && dire.y == 0)
+	{
+		dire = d * 40;
+		location += dire;
+
+	}
 
 }

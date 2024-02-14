@@ -4,7 +4,7 @@
 #include<math.h>
 
 GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),
-barrier_image(NULL), mileage(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
+audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -25,9 +25,8 @@ void GameMainScene::Initialize()
 	ReadHighScore();
 
 	//画像の読み込み
-	back_ground = LoadGraph("Resource/images/back.bmp");
-	barrier_image = LoadGraph("Resource/images/barrier.png");
-	/*int result = LoadDivGraph("Resource/images/car.bmp", 3, 3, 1, 63, 120, enemy_image);*/
+	back_ground = LoadGraph("Resource/images/back1.bmp");
+	audience_img = LoadGraph("Resource/images/audience.png");
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -40,9 +39,9 @@ void GameMainScene::Initialize()
 		throw("Resource/images/car.bmpがありません\n");
 	}*/
 
-	if (barrier_image == -1)
+	if (audience_img == -1)
 	{
-		throw("Resource/images/barrier.pngがありません?n");
+		throw("Resource/images/audience.pngがありません?");
 	}
 
 	//オブジェクトの生成
@@ -80,7 +79,8 @@ eSceneType GameMainScene::Update()
 	player2->Update();
 
 	//移動距離の更新
-	mileage += (int)player->GetSpeed() + 5;
+	mileage += 15;
+	mileage2 += 2;
 
 	/**
 	敵生成処理
@@ -118,7 +118,7 @@ eSceneType GameMainScene::Update()
 
 			}
 
-
+			//プレイヤー１とパトカーの当たり判定
 			if (IsHitCheckP1(player,Pcar))
 			{
 				player->SetActive(false);
@@ -155,6 +155,7 @@ eSceneType GameMainScene::Update()
 				// ドアに当たると回転する（プレイヤー１）
 				if (IsHitDoorR2(player, player2))
 				{
+					
 					player->SetActive(false);
 				}
 
@@ -189,8 +190,14 @@ eSceneType GameMainScene::Update()
 void GameMainScene::Draw() const
 {
 	//背景画像の描画
-	DrawGraph(0, mileage % 480 - 480, back_ground, TRUE);
-	DrawGraph(0, mileage % 480, back_ground, TRUE);
+	DrawGraph(0, mileage % 720 - 720, back_ground, TRUE);
+	DrawGraph(0, mileage % 720, back_ground, TRUE);
+
+	//観客の描画
+	DrawGraph(1160, mileage2%720-720, audience_img, TRUE);
+	DrawGraph(1160, mileage2%720, audience_img, TRUE);
+	DrawTurnGraph(-80, mileage2%720-720, audience_img, TRUE);
+	DrawTurnGraph(-80, mileage2%720, audience_img, TRUE);
 
 	//敵の描画
 	for (int i = 0; i < 10; i++)
@@ -209,47 +216,6 @@ void GameMainScene::Draw() const
 	//パトカーの描画
 	Pcar->Draw();
 
-	//UIの描画
-	DrawBox(500, 0, 640, 480, GetColor(0, 153, 0), TRUE);
-	SetFontSize(16);
-	DrawFormatString(510, 20, GetColor(0, 0, 0), "ハイスコア");
-	DrawFormatString(560, 40, GetColor(255, 255, 255), "%08d", high_score);
-	DrawFormatString(510, 80, GetColor(0, 0, 0), "避けた数");
-
-	for (int i = 0; i < 3; i++)
-	{
-		DrawRotaGraph(523 + (i * 50), 120, 0.3, 0, enemy_image[i], TRUE, FALSE);
-		DrawFormatString(510 + (i * 50), 140, GetColor(255, 255, 255), "%03d", enemy_count[i]);
-	}
-
-	DrawFormatString(510, 200, GetColor(0, 0, 0), "走行距離");
-	DrawFormatString(555, 220, GetColor(255, 255, 255), "%08d", mileage / 10);
-	DrawFormatString(510, 240, GetColor(0, 0, 0), "スピード");
-	DrawFormatString(555, 260, GetColor(255, 255, 255), "%08.1f", player->GetSpeed());
-
-	DrawFormatString(200, 260, GetColor(255, 255, 255), "count%d", count);
-	DrawFormatString(200, 280, GetColor(255, 255, 255), "timer%d", timer);
-
-	//バリア枚数の描画
-	for (int i = 0; i < player -> GetBarriarCount(); i++)
-	{
-		DrawRotaGraph(520 + i * 25, 340, 0.2f, 0, barrier_image, TRUE, FALSE);
-	}
-
-	//燃料ゲージの描画
-	float fx = 510.0f;
-	float fy = 390.0f;
-	DrawFormatString(fx, fy, GetColor(0, 0, 0), "FUEL METER");
-	DrawBoxAA(fx, fy + 20.0f, fx + (player->GetFuel() * 100 / 20000), fy + 40.0f,
-		GetColor(0, 102, 204), TRUE);
-	DrawBoxAA(fx, fy + 20.0f, fx + 100.0f, fy + 40.0f, GetColor(0, 0, 0), FALSE);
-
-	//体力ゲージの描画
-	fx = 510.0f;
-	fy = 430.0f;
-	DrawFormatStringF(fx, fy, GetColor(0, 0, 0), "PLAYER HP");
-	DrawBoxAA(fx, fy + 20.0f, fx + (player->GetHp() * 100 / 1000), fy + 40.0f,GetColor(255, 0, 0), TRUE);
-	DrawBoxAA(fx, fy + 20.0f, fx + 100.0f, fy + 40.0f, GetColor(0, 0, 0), FALSE);
 }
 
 //終了時処理

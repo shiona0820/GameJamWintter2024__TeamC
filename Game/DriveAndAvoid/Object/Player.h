@@ -59,6 +59,7 @@ public:
 	bool IsBarrier() const;         //バリア有効かを取得
 
 	int GetAttackflg() const;//アタックフラグを返す
+	void DownHP();//攻撃に当たった時HPを減らす
 
 	//void direction(Vector2D xy);			//どこに当たったか調べる
 	void RepulsionX(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用左右

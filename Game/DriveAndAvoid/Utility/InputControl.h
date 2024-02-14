@@ -11,13 +11,19 @@ private:
 	static float trigger[2];          //左右トリガー入力値
 	static Vector2D stick[2];         //左右スティック入力値
 
+	static bool now_button2[16];       //現在フレーム入力値
+	static bool old_button2[16];       //過去フレーム入力値
+	static float trigger2[2];          //左右トリガー入力値
+	static Vector2D stick2[2];         //左右スティック入力値
+
 public:
 	static void Update();             //更新処理
 
+
 	//ボタン入力取得処理
-	static bool GetButton(int button);   //押し続ける間
-	static bool GetButtonDown(int button);   //離した瞬間
-	static bool GetButtonUp(int button);     //離した瞬間
+	static bool GetButton(int button,int cnum);   //押し続ける間
+	static bool GetButtonDown(int button,int cnum);   //離した瞬間
+	static bool GetButtonUp(int button,int cnum);     //離した瞬間
 
 	//トリガー入力取得処理
 	static float GetLeftTrigger();            //左トリガー

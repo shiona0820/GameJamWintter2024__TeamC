@@ -7,12 +7,21 @@ bool InputControl::old_button[16] = {};
 float InputControl::trigger[2] = {};
 Vector2D InputControl::stick[2] = {};
 
+//PAD２
+//静的メンバ変数定義
+bool InputControl::now_button2[16] = {};
+bool InputControl::old_button2[16] = {};
+float InputControl::trigger2[2] = {};
+Vector2D InputControl::stick2[2] = {};
+
 //入力機能：更新処理
 void InputControl::Update()
 {
 	//XInputコントローラーの入力値を取得する
 	XINPUT_STATE input_state = {};
+	XINPUT_STATE input_state2 = {};
 	GetJoypadXInputState(DX_INPUT_PAD1, &input_state);
+	GetJoypadXInputState(DX_INPUT_PAD2, &input_state2);
 
 	//ボタン入力値の更新
 	for (int i = 0; i < 16; i++)
@@ -60,24 +69,96 @@ void InputControl::Update()
 	{
 		stick[1].y = -((float)input_state.ThumbRY / (float)SHRT_MIN);
 	}
+
+
+	/*パッド２*/
+
+		//ボタン入力値の更新
+	for (int i = 0; i < 16; i++)
+	{
+		old_button2[i] = now_button2[i];
+		now_button2[i] = (bool)input_state2.Buttons[i];
+	}
+
+	//トリガー入力値の更新（0.0ｆ～1.0ｆに範囲を制限する）
+	trigger2[0] = (float)input_state2.LeftTrigger / (float)UCHAR_MAX;
+	trigger2[1] = (float)input_state2.RightTrigger / (float)UCHAR_MAX;
+
+	//左スティック入力値の更新（-1.0ｆ～1.0ｆに範囲を制限する）
+	if (input_state2.ThumbLX > 0.0f)
+	{
+		stick2[0].x = (float)input_state2.ThumbLX / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick2[0].x = -((float)input_state2.ThumbLX / (float)SHRT_MIN);
+	}
+	if (input_state2.ThumbLY > 0.0f)
+	{
+		stick2[0].y = (float)input_state2.ThumbLY / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick2[0].y = -((float)input_state2.ThumbLY / (float)SHRT_MIN);
+	}
+
+	//右スティック入力値の更新（-1.0～1.0fに範囲を制限する）
+	if (input_state2.ThumbRX > 0.0f)
+	{
+		stick2[1].x = (float)input_state2.ThumbRX / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick2[1].x = -((float)input_state2.ThumbRX / (float)SHRT_MIN);
+	}
+	if (input_state2.ThumbRY > 0.0f)
+	{
+		stick2[1].y = (float)input_state2.ThumbRY / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick2[1].y = -((float)input_state2.ThumbRY / (float)SHRT_MIN);
+	}
+
 }
 
 //ボタン取得：押してる間
-bool InputControl::GetButton(int button)
+bool InputControl::GetButton(int button,int cnum)
 {
-	return CheckButtonRange(button) && (now_button[button] && old_button[button]);
+	if (cnum == 0) {
+		return CheckButtonRange(button) && (now_button[button] && old_button[button]);
+	}
+	else if (cnum == 1)
+	{
+		return CheckButtonRange(button) && (now_button2[button] && old_button2[button]);
+	}
 }
 
 //ボタン取得：押した瞬間
-bool InputControl::GetButtonDown(int button)
+bool InputControl::GetButtonDown(int button,int cnum)
 {
-	return CheckButtonRange(button) && (now_button[button] && !old_button[button]);
+	if (cnum == 0)
+	{
+		return CheckButtonRange(button) && (now_button[button] && !old_button[button]);
+	}
+	else if (cnum == 1)
+	{
+		return CheckButtonRange(button) && (now_button2[button] && !old_button2[button]);
+	}
 }
 
 //ボタン取得：離した瞬間
-bool InputControl::GetButtonUp(int button)
+bool InputControl::GetButtonUp(int button, int cnum)
 {
-	return CheckButtonRange(button) && (!now_button[button] && old_button[button]);
+	if (cnum == 0)
+	{
+		return CheckButtonRange(button) && (!now_button[button] && old_button[button]);
+	}
+	else if (cnum == 1)
+	{
+		return CheckButtonRange(button) && (!now_button2[button] && old_button2[button]);
+
+	}
 }
 
 //左トリガー取得

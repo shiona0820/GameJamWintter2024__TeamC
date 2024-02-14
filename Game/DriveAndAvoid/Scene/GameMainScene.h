@@ -4,6 +4,7 @@
 #include"../Object/Player.h"
 #include"../Object/Enemy.h"
 #include"../Object/Policecar.h"
+#include "../Item.h"
 
 
 class GameMainScene : public SceneBase
@@ -11,15 +12,28 @@ class GameMainScene : public SceneBase
 private:
 	int high_score;     //ハイスコア
 	int back_ground;    //背景画像
-	int barrier_image;  //バリア画像
-	int mileage;        //走行距離
+	int audience_img;	//観客画像
+
+	int mileage;        //背景画像を動かすよう
+	int mileage2;        //観客画像動かす用
 	int enemy_image[3]; //敵画像
 	int enemy_count[3]; //通り過ぎた敵カウント
 	Player* player;     //プレイヤー
+	Player* player2;     //プレイヤー2
 	Enemy** enemy;       //敵
 	Policecar* Pcar;     //パトカー
+	
+	Item* item[10];
+
+	int max, min;
+	
 	int count;          //６０回数える
 	int timer;          //countが６０になったら１数える
+	int ptimer;
+	int ptimer2;
+
+	int time;//アクション起きた時の時間を渡す用
+	bool flg;
 
 public:
 	GameMainScene();
@@ -38,5 +52,20 @@ private:
 
 	//当たり判定
 	//bool IsHitCheck(Player* p, Enemy* e);
-	bool IsHitCheck(Player* p, Policecar* car);
+	bool IsHitCheckPlayer(Player* p, Player* p2);
+	bool IsHitCheckP1(Player* p,Policecar* car);
+	bool IsHitCheckP2(Player* p2,Policecar* car);
+
+	// ドアの当たり判定
+	bool IsHitDoorR(Player* p1,Player* p2);
+	bool IsHitDoorL(Player* p1,Player* p2);
+
+	// ドアの当たり判定（プレイヤー２）
+	bool IsHitDoorR2(Player* p1, Player* p2);
+	bool IsHitDoorL2(Player* p1, Player* p2);
+
+	//アイテムの当たり判定
+	bool IsHitCheckItem(Player* p, Item* i);
+	bool IsHitItem(Player* p2, Item* i);
+
 };

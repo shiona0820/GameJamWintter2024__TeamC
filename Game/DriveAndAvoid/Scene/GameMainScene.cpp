@@ -59,6 +59,8 @@ void GameMainScene::Initialize()
 
 	Pcar->Initialize();
 
+
+
 	min = 1;
 	max = 4;
 
@@ -77,22 +79,26 @@ void GameMainScene::Initialize()
 	count = 0;
 	timer = 0;
 
-
+	p1win = 0;
+	p2win = 0;
 }
 
 //更新処理
 eSceneType GameMainScene::Update()
 {
 
+	//三回分の勝ち負けを記録する
+	//プレイヤー１か２が死んだ場合
+	if (player->GetDeathFlg() == true || player2->GetDeathFlg()==true)
+	{
+		win();
+	}
 
 	//プレイヤーの更新
 	player->Update();
 	//プレイヤー２の更新
 	player2->Update();
 
-	//アイテムの更新
-	/*item[10]->Update();
-	item[]->GetLocation().y;*/
 
 	//アイテムの更新
 	for (int i = 0; i < 10; i++)
@@ -279,19 +285,6 @@ eSceneType GameMainScene::Update()
 
 }
 
-
-			////当たり判定の確認
-			//if (IsHitCheck(player,enemy[i]))
-			//{
-			//	player -> SetActive(false);
-			//		player -> DecreaseHp(-50.0f);
-			//		enemy[i] -> Finalize();
-			//		delete enemy[i];
-			//		enemy[i] = nullptr;
-			//}
-			
-
-
 //描画処理
 void GameMainScene::Draw() const
 {
@@ -426,6 +419,41 @@ void GameMainScene::Finalize()
 	//	}
 	//}
 	//delete[] enemy;
+}
+
+
+void GameMainScene::win()
+{
+	if (winflg == false)
+	{
+		//三回分の勝ち負けを記録する
+		//プレイヤー１が死んだ場合
+		if (player->GetDeathFlg() == true)
+		{
+			p2win++;
+		}
+
+		//プレイヤー２が死んだ場合
+		if (player2->GetDeathFlg() == true)
+		{
+			p1win++;
+		}
+	}
+
+	winflg = true;
+
+	//オブジェクトの初期化
+	player->Initialize(0, 400);
+	player2->Initialize(1, 200);
+
+	Pcar->Initialize();
+
+	for (int i = 0; i < 10; i++)
+	{
+		item[i] = new Item;
+		item[i]->Initialize(GetRand(10));
+	}
+
 }
 
 //現在のシーン情報を取得

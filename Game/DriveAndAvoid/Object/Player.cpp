@@ -51,6 +51,8 @@ void Player::Initialize(int pnum,float x)
 	alpha = 0;
 	hpcheck = 0;
 
+	death_flg = false;
+
 	// 爆発アニメーション用カウント
 	explosion_count = 0;
 	exNum = 0;
@@ -92,6 +94,11 @@ void Player::Update()
 {
 	//hpの値をもらう
 	hpcheck = hp;
+
+	if (hp <= 0)
+	{
+		death_flg = true;
+	}
 
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
@@ -298,6 +305,11 @@ void Player::DecreaseHp(float value)
 bool Player::GetHitflg() const
 {
 	return this->hit_flg;
+}
+
+bool Player::GetDeathFlg() const
+{
+	return this->death_flg;
 }
 
 void Player::Hitflg(bool flg)

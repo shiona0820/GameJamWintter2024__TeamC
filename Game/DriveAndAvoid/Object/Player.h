@@ -69,6 +69,8 @@ public:
 	bool IsBarrier() const;         //バリア有効かを取得
 	bool GetHitflg() const;//HPを減らすのを一回だけにする用
 
+	bool GetDeathFlg() const;//敗北取得
+
 	// ボタンフラグを返す
 	int GetBflg() const;
 	int GetXflg() const;

@@ -274,7 +274,9 @@ eSceneType GameMainScene::Update()
 			{
 				item[i]->ResetY(0);
 				item[i]->Initialize(GetRand(10));
+				item[i]->Hitflg(false);
 			}
+
 
 
 			if (item[i] != nullptr)

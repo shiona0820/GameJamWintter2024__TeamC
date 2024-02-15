@@ -12,9 +12,14 @@ private:
 	int gWaitTime;
 	int min, max;
 
+	float angle;
+	float speed;
+
 	Vector2D location;
 	Vector2D box_size;
 	Player player;
+
+	bool hitflg;
 
 public:
 	Item();
@@ -23,6 +28,9 @@ public:
 	void Draw()const;
 	void Initialize(int x);             //‰Šú‰»ˆ—
 	void ResetY(float y);
+
+	bool GetHitflg() const;
+	void Hitflg(bool flg);
 
 	Vector2D GetLocation() const; //ˆÊ’uî•ñ‚Ìæ“¾
 	Vector2D GetBoxSize() const;  //“–‚½‚è”»’è‚Ì‘å‚«‚³‚ğæ“¾
@@ -33,6 +41,7 @@ public:
 		int w, h;
 		int image;
 		int flg;
+		int hitflg;
 		int speed;
 	};
 	struct CONE cone[3];

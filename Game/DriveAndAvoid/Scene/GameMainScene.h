@@ -103,4 +103,7 @@ private:
 	//勝敗処理
 	void win();
 
+	// アイテムとパトカーの当たり判定
+	bool IsHitItem_Police(Item* i, Policecar* p);
+
 };

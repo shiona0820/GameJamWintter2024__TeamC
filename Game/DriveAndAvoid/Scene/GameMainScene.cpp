@@ -449,6 +449,13 @@ eSceneType GameMainScene::Update()
 		for (int i = 0; i < 10; i++)
 		{
 
+			if ((item[i]->GetLocation().x < 200 || item[i]->GetLocation().x > 1160.0f) && item[i]->GetLocation().y <= 5)
+			{
+				item[i]->ResetY(0);
+				item[i]->Initialize(GetRand(10));
+			}
+
+
 			if (item[i] != nullptr)
 			{
 				if (IsHitCheckItem(player, item[i]))
@@ -481,12 +488,18 @@ eSceneType GameMainScene::Update()
 				if (item[i]->GetLocation().y > 700)
 				{
 					item[i]->ResetY(0);
+					item[i]->Initialize(GetRand(10));
 				}
 			}
 			if (item[i] == nullptr)
 			{
 				item[i] = new Item;
 				item[i]->Initialize(GetRand(10));
+			}
+
+			if (IsHitItem_Police(item[i], Pcar))
+			{
+				item[i]->Hitflg(true);
 			}
 		}
 
@@ -995,6 +1008,21 @@ bool GameMainScene::IsHitItem(Player* p2, Item* i)
 }
 
 
+bool GameMainScene::IsHitItem_Police(Item* i, Policecar* p)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = i->GetLocation() - p->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = i->GetBoxSize() + p->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+	
+
+}
+
 void GameMainScene::checkhum()
 {
 	howmany = 0;
@@ -1002,7 +1030,7 @@ void GameMainScene::checkhum()
 	{
 		whoLose[0] = 1;
 	}
-	if (player2->GetDeathFlg()==true)
+	if (player2->GetDeathFlg() == true)
 	{
 		whoLose[1] = 1;
 	}
@@ -1024,5 +1052,5 @@ void GameMainScene::checkhum()
 	{
 		wFlg = true;
 	}
-	
+
 }

@@ -52,6 +52,8 @@ private:
 	int starimg;
 
 	bool winflg;
+	bool endflg;
+	int endcount;
 	int whowin;//‚Ç‚Á‚¿‚ªŸ‚Á‚½‚©
 	int whoLose[5];
 	int howmany;

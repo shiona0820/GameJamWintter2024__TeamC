@@ -20,14 +20,17 @@ void ResultScene::Initialize()
 	switch (GameMainScene::Wineer)
 	{
 	case 1:
-		back_ground = LoadGraph("Resource/images/p1win.png");
+		back_ground = LoadGraph("Resource/images/player1win.png");
 		break;
 	case 2:
 		//âÊëúÇÃì«Ç›çûÇ›
-		back_ground = LoadGraph("Resource/images/p2win.png");
+		back_ground = LoadGraph("Resource/images/player2win.png");
 		break;
 	case 3:
-		//back_ground = LoadGraph("Resource/images/p2win.png");
+		back_ground = LoadGraph("Resource/images/player3win.png");
+		break;
+	case 4:
+		back_ground = LoadGraph("Resource/images/player4win.png");
 		break;
 	default:
 		break;
@@ -67,7 +70,10 @@ void ResultScene::Draw() const
 		DrawString(600, 0, "player2win!", GetColor(255, 255, 255));
 		break;
 	case 3:
-		DrawString(0, 0, "player3", GetColor(255, 255, 255));
+		DrawString(600, 0, "player3win!", GetColor(255, 255, 255));
+		break;
+	case 4:
+		DrawString(600, 0, "player4win!", GetColor(255, 255, 255));
 		break;
 	default:
 		break;

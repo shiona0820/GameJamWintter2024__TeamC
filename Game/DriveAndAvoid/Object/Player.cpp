@@ -254,8 +254,8 @@ void Player::Draw()
 	//default:
 	//	break;
 	//}
-	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
-	DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
+	//DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
+	//DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
 	//攻撃のロケーション
 	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
 	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
@@ -263,7 +263,7 @@ void Player::Draw()
 	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
 
 
-	DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
+	//DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
 }
 
 //終了処理
@@ -588,10 +588,13 @@ void Player::Explosion()
 	{
 	case(0):
 		exNum = 0;
+		break;
 	case(10):
 		exNum = 1;
+		break;
 	case(20):
 		exNum = 2;
+		break;
 	default:
 		break;
 	}

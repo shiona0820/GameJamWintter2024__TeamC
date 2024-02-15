@@ -30,6 +30,11 @@ void Player::Initialize(int pnum,float x)
 	playernum = pnum;
 	playerd = 0;
 
+	survival_flg = true;
+
+	blinkingcun = 0;
+	blinking_flg = false;
+
 	Acount = 0;
 	Bflg = false;
 	Xflg = false;
@@ -120,14 +125,30 @@ void Player::Update()
 	}
 
 	//操作不可状態であれば、自身を回転させる
-	if (!is_active)
+	if (!is_active && exNum <= 2)
 	{
 		location.y++;
+
 		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
 		speed = 1.0f;
+		blinkingcun++;
+		switch (blinkingcun)
+		{
+		case(1):
+			blinking_flg = true;
+			break;
+		case(3):
+			blinking_flg = false;
+			break;
+		case(6):
+			blinkingcun = 0;
+			break;
+		default:
+			break;
+		}
 		if (angle >= DX_PI_F * 4.0f)
 		{
 			is_active = true;
@@ -191,6 +212,30 @@ void Player::Update()
 	DoorLlocation.y = location.y + 4;
 
 
+	if (hit_flg == true)
+	{
+		blinkingcun++;
+		switch (blinkingcun)
+		{
+		case(1):
+			blinking_flg = true;
+			break;
+		case(3):
+			blinking_flg = false;
+			break;
+		case(6):
+			blinkingcun = 0;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		blinkingcun = 0;
+		blinking_flg = false;
+	}
+
 	//透けるやつ
 	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
 	//爆発
@@ -202,58 +247,106 @@ void Player::Update()
 //描画処理
 void Player::Draw()
 {
-
-	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
-	//プレイヤー画像の描画
-	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
-
-	if (Attackflg == false && exNum < 2)
-	{
-		//プレイヤー画像の描画
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
-
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	}
-	else if (Attackflg == true && Bflg == true)
+	if (survival_flg == true)
 	{
 
-		//プレイヤー画像の描画（攻撃時）
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
-		// ドア描画
-		DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
+		////プレイヤー画像の描画
+		//DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+		if (Attackflg == false/* && exNum < 2*/)
+		{
+			
+			// 無敵時間中
+			if (blinking_flg == true)
+			{
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//点滅
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+			else
+			{
+				//プレイヤー画像の描画
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+
+		}
+		else if (Attackflg == true && Bflg == true)
+		{
+
+			// 無敵時間中
+			if (blinking_flg == true)
+			{
+
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+				
+			}
+			else
+			{
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
+				// ドア描画
+				DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+
+
+		}
+		else if (Attackflg == true && Xflg == true)
+		{
+
+			if (blinking_flg == true)
+			{
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+			else
+			{
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
+				// ドア描画
+				DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+		}
 
 	}
-	else if (Attackflg == true && Xflg == true)
-	{
-		//プレイヤー画像の描画（攻撃時）
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
-		// ドア描画
-		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
 
-	// 爆発アニメーションの描画
-	if (hp <= 0)
-	{
-		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
-	}
+
+		// 爆発アニメーションの描画
+		if (hp <= 0 && exNum <= 2)
+		{
+			DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
+		}
 
 }
 
@@ -289,6 +382,11 @@ void Player::DecreaseHp(float value)
 bool Player::GetHitflg() const
 {
 	return this->hit_flg;
+}
+
+bool Player::GetSurvival_flg() const
+{
+	return this->survival_flg;;
 }
 
 bool Player::GetDeathFlg() const
@@ -590,6 +688,12 @@ void Player::Explosion()
 		break;
 	case(20):
 		exNum = 2;
+		survival_flg = false;
+		break;
+	case(80):
+		exNum = 1;
+	case(90):
+		exNum = 3;
 		break;
 	default:
 		break;

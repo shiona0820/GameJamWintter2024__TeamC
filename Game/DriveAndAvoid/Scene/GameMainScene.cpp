@@ -617,7 +617,7 @@ eSceneType GameMainScene::Update()
 
 			if ((item[i]->GetLocation().x < 200 || item[i]->GetLocation().x > 1160.0f) && item[i]->GetLocation().y <= 5)
 			{
-				item[i]->ResetY(0);
+				item[i]->ResetY(-10);
 				item[i]->Initialize(GetRand(10));
 				item[i]->Hitflg(false);
 			}
@@ -664,7 +664,7 @@ eSceneType GameMainScene::Update()
 			{
 				if (item[i]->GetLocation().y > 700)
 				{
-					item[i]->ResetY(0);
+					item[i]->ResetY(-10);
 					item[i]->Initialize(GetRand(10));
 				}
 			}

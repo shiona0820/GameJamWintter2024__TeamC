@@ -35,14 +35,27 @@ void GameMainScene::Initialize()
 
 
 	//BGMの読み込み
-	back_sound = LoadSoundMem("Resource/sound/BGM1.MP3");
+	back_sound = LoadSoundMem("Resource/sound/BGM1.mp3");
+	countdown_sound = LoadSoundMem("Resource/sound/countdown.mp3");
+	slip_sound = LoadSoundMem("Resource/sound/slip,kkj.mp3");
+
+	
+	
 	//BGMの音量設定
 	ChangeVolumeSoundMem(255 * 50 / 100, back_sound);
-	//BGMのエラーチェック
-	if (back_sound == -1)
-	{
-		throw("Resource/sound/BGM1.MP3がありません");
-	}
+	ChangeVolumeSoundMem(255 * 100 / 100, countdown_sound);
+	ChangeVolumeSoundMem(255 * 100 / 150, slip_sound);
+	
+	
+	////BGMのエラーチェック
+	//if (back_sound == -1)
+	//{
+	//	throw("Resource/sound/BGM1.MP3がありません");
+	//}
+	//if (countdown_sound == -1)
+	//{
+	//	throw("Resource/sound/カウントダウン３がありません");
+	//}
 
 
 	//エラーチェック
@@ -101,9 +114,11 @@ void GameMainScene::Initialize()
 //更新処理
 eSceneType GameMainScene::Update()
 {
-
 	if (startflg == false)
 	{
+		//カウントダウンSE
+		PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, FALSE);
+
 		// カウントダウン後にゲーム開始
 		starttimer++;
 		switch (starttimer)
@@ -120,14 +135,17 @@ eSceneType GameMainScene::Update()
 		case(180):
 			startflg = true;
 			startnum = 0;
+
+
 			break;
 		default:
 			break;
 		}
-
 	}
 	else
 	{
+		//メインBGM
+		PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
 		//プレイヤーの更新
 		player->Update();
 		//プレイヤー２の更新
@@ -220,7 +238,6 @@ eSceneType GameMainScene::Update()
 		if (player->GetHp() <= 0)
 		{
 			player->Explosion();
-
 		}
 		if (player2->GetHp() <= 0)
 		{
@@ -312,7 +329,7 @@ eSceneType GameMainScene::Update()
 				item[i]->Initialize(GetRand(10));
 			}
 		}
-
+		
 		//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 /*	if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
 	{

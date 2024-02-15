@@ -41,8 +41,6 @@ void Policecar::Update()
 void Policecar::Draw()
 {
 	DrawRotaGraphF(location.x,location.y, 1.0,0,image, TRUE);
-	DrawCircle(location.x, location.y, 3, GetColor(255, 255, 0), TRUE);
-	//DrawBoxAA(0, 479, 639, 800, GetColor(255, 255, 255), FALSE);
 }
 
 void Policecar::Finalize()

@@ -50,7 +50,9 @@ private:
 
 	bool winflg;
 	int whowin;//どっちが勝ったか
-
+	int whoLose[5];
+	int howmany;
+	bool wFlg;//関数win解しよう
 
 public:
 	int static Wineer;
@@ -72,6 +74,8 @@ private:
 	//当たり判定
 	//bool IsHitCheck(Player* p, Enemy* e);
 	bool IsHitCheckPlayer(Player* p, Player* p2);
+	bool IsHitCheckPlayer2(Player* p2, Player* p3);
+	bool IsHitCheckPlayer3(Player* p, Player* p3);
 	bool IsHitCheckP1(Player* p,Policecar* car);
 	bool IsHitCheckP2(Player* p2,Policecar* car);
 	bool IsHitCheckP3(Player* p3,Policecar* car);
@@ -84,14 +88,17 @@ private:
 	bool IsHitDoorR2(Player* p1, Player* p2);
 	bool IsHitDoorL2(Player* p1, Player* p2);
 
-	// ドアの当たり判定（プレイヤー３）
-	bool IsHitDoorR2(Player* p1, Player* p2);
-	bool IsHitDoorL2(Player* p1, Player* p2);
+	//// ドアの当たり判定（プレイヤー３）
+	bool IsHitDoorR3(Player* p1, Player* p3);
+	bool IsHitDoorL3(Player* p1, Player* p3);
 
 
 	//アイテムの当たり判定
 	bool IsHitCheckItem(Player* p, Item* i);
 	bool IsHitItem(Player* p2, Item* i);
+
+	//生き残ってる人をチェック	
+	void checkhum();
 
 	//勝敗処理
 	void win();

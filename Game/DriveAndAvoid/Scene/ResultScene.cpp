@@ -16,8 +16,23 @@ ResultScene::~ResultScene()
 //初期化処理
 void ResultScene::Initialize()
 {
-	//画像の読み込み
-	back_ground = LoadGraph("Resource/images/back.bmp");
+	
+	switch (GameMainScene::Wineer)
+	{
+	case 1:
+		back_ground = LoadGraph("Resource/images/p1win.png");
+		break;
+	case 2:
+		//画像の読み込み
+		back_ground = LoadGraph("Resource/images/p2win.png");
+		break;
+	case 3:
+		//back_ground = LoadGraph("Resource/images/p2win.png");
+		break;
+	default:
+		break;
+	}
+
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -43,17 +58,18 @@ void ResultScene::Draw() const
 {
 	//背景画像を描画
 	DrawGraph(0, 0, back_ground, TRUE);
-	if (GameMainScene::Wineer == 1);
 	switch (GameMainScene::Wineer)
 	{
 	case 1:
-		DrawString(0, 0, "player1", GetColor(255, 255, 255));
+		DrawString(600, 0, "player1win!", GetColor(255, 255, 255));
 		break;
 	case 2:
-		DrawString(0, 0, "player2", GetColor(255, 255, 255));
+		DrawString(600, 0, "player2win!", GetColor(255, 255, 255));
 		break;
 	case 3:
 		DrawString(0, 0, "player3", GetColor(255, 255, 255));
+		break;
+	default:
 		break;
 	}
 }

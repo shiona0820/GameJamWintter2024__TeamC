@@ -78,7 +78,7 @@ void Player::Initialize(int pnum,float x)
 	else if (pnum == 2)
 	{
 		//player3‰æ‘œ‚Ì“Ç‚İ‚İ
-		image = LoadGraph("Resource/images/car1.bmp");
+		image = LoadGraph("Resource/images/car1.png");
 		carRimg = LoadGraph("Resource/images/OpenDoor3_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor3_L.png");
 		doorRimg = LoadGraph("Resource/images/Door3_R.png");

@@ -54,6 +54,7 @@ void GameMainScene::Initialize()
 	//オブジェクトの生成
 	player = new Player;
 	player2 = new Player;
+	player3 = new Player;
 
 	enemy = new Enemy* [10];
 	Pcar = new Policecar;
@@ -93,6 +94,7 @@ void GameMainScene::Initialize()
 	p2win = 0;
 	p3win = 0;
 	whowin = 0;
+	wFlg = false;
 }
 
 //更新処理
@@ -101,6 +103,7 @@ eSceneType GameMainScene::Update()
 
 	if (startflg == false)
 	{
+
 		// カウントダウン後にゲーム開始
 		starttimer++;
 		switch (starttimer)
@@ -117,6 +120,7 @@ eSceneType GameMainScene::Update()
 		case(180):
 			startflg = true;
 			startnum = 0;
+
 			break;
 		default:
 			break;
@@ -125,11 +129,16 @@ eSceneType GameMainScene::Update()
 	}
 	else
 	{
+
 		//三回分の勝ち負けを記録する
 		//プレイヤー１か２が死んだ場合
-		if (player->GetDeathFlg() == true || player2->GetDeathFlg() == true)
+		if (wFlg==true)
 		{
 			win();
+		}
+		else
+		{
+			checkhum();
 		}
 
 		//プレイヤーの更新
@@ -137,7 +146,7 @@ eSceneType GameMainScene::Update()
 		//プレイヤー２の更新
 		player2->Update();
 		//プレイヤー３の更新
-
+		player3->Update();
 
 		//アイテムの更新
 		for (int i = 0; i < 10; i++)
@@ -185,7 +194,12 @@ eSceneType GameMainScene::Update()
 			ptimer2 = 0;
 		}
 
-
+		//プレイヤーがダメージ食らった無敵時間
+		if (ptimer3 > 3)
+		{
+			player3->Hitflg(false);
+			ptimer3 = 0;
+		}
 
 
 		//当たり判定の確認
@@ -199,24 +213,34 @@ eSceneType GameMainScene::Update()
 			}
 
 			player->Exclusion(player2->GetLocation());
-			player->Exclusion(player3->GetLocation());
 			player2->Exclusion(player->GetLocation());
-			player2->Exclusion(player3->GetLocation());
-			player3->Exclusion(player->GetLocation());
-			player3->Exclusion(player2->GetLocation());
 
 			//当たった時、相手がどこに当たったかと相手がどこ向いているのか渡す
 			player->RepulsionX(player->GetLocation() - player2->GetLocation(), player2->GetDirection());
-			player->RepulsionX(player->GetLocation() - player3->GetLocation(), player3->GetDirection());
-
 			player2->RepulsionX(player2->GetLocation() - player->GetLocation(), player->GetDirection());
-			player2->RepulsionX(player2->GetLocation() - player3->GetLocation(), player3->GetDirection());
-
-			player3->RepulsionX(player3->GetLocation() - player->GetLocation(), player->GetDirection());
-			player3->RepulsionX(player3->GetLocation() - player2->GetLocation(), player2->GetDirection());
-
 
 		}
+
+		if (IsHitCheckPlayer2(player2, player3))
+		{
+			player2->Exclusion(player3->GetLocation());
+			player3->Exclusion(player2->GetLocation());
+
+			player2->RepulsionX(player2->GetLocation() - player3->GetLocation(), player3->GetDirection());
+			player3->RepulsionX(player3->GetLocation() - player2->GetLocation(), player2->GetDirection());
+
+		}
+
+		if (IsHitCheckPlayer3(player, player3))
+		{
+			player->Exclusion(player->GetLocation());
+			player3->Exclusion(player3->GetLocation());
+
+			player->RepulsionX(player->GetLocation() - player3->GetLocation(), player3->GetDirection());
+			player3->RepulsionX(player3->GetLocation() - player->GetLocation(), player->GetDirection());
+
+		}
+
 
 		//プレイヤー１とパトカーの当たり判定
 		if (IsHitCheckP1(player, Pcar))
@@ -258,10 +282,10 @@ eSceneType GameMainScene::Update()
 
 		}
 
+		//プレイヤー１の攻撃
 		//攻撃の入力押したときだけ判定にする↓
 		if (player->GetAttackflg() == TRUE)
 		{
-			//プレイヤー１の攻撃
 			// ドアに当たると回転する(プレイヤー２)
 			if (player2->GetHitflg() == false) {
 				if (IsHitDoorR(player, player2))
@@ -285,7 +309,8 @@ eSceneType GameMainScene::Update()
 				}
 			}
 
-			// ドアに当たると回転する(プレイヤー3)
+
+			// ドアに当たると回転する(プレイヤー２)
 			if (player3->GetHitflg() == false) {
 				if (IsHitDoorR(player, player3))
 				{
@@ -308,12 +333,11 @@ eSceneType GameMainScene::Update()
 				}
 			}
 
-
 		}
 
+		//プレイヤー２の攻撃
 		if (player2->GetAttackflg() == TRUE)
 		{
-			//プレイヤー２の攻撃
 			// ドアに当たると回転する（プレイヤー１）
 			if (player->GetHitflg() == false) {
 				if (IsHitDoorR2(player, player2))
@@ -331,31 +355,72 @@ eSceneType GameMainScene::Update()
 				}
 			}
 
-			// ドアに当たると回転する(プレイヤー3)
+
+			// ドアに当たると回転する（プレイヤー3）
 			if (player3->GetHitflg() == false) {
-				if (IsHitDoorR(player, player3))
+				if (IsHitDoorR2(player3, player2))
 				{
-					if (player3->GetHitflg() == false)
-					{
-						ptimer3 = 0;
-						player3->DecreaseHp(-100);
-						player3->SetActive(false);
-					}
+					ptimer3 = 0;
+					player3->DecreaseHp(-100);
+					player3->SetActive(false);
 				}
 
-				if (IsHitDoorL(player, player3))
+				if (IsHitDoorL2(player3, player2))
 				{
-					if (player3->GetHitflg() == false)
-					{
-						ptimer3 = 0;
-						player3->DecreaseHp(-100);
-						player3->SetActive(false);
-					}
+					ptimer3 = 0;
+					player3->DecreaseHp(-100);
+					player3->SetActive(false);
 				}
 			}
 
+		
 		}
 
+		//プレイヤー３の攻撃
+		if (player3->GetAttackflg() == TRUE)
+		{
+			// ドアに当たると回転する（プレイヤー１）
+			if (player->GetHitflg() == false) {
+				if (IsHitDoorR3(player3, player))
+				{
+					ptimer = 0;
+					player->DecreaseHp(-100);
+					player->SetActive(false);
+				}
+
+				if (IsHitDoorL3(player3, player))
+				{
+					ptimer = 0;
+					player->DecreaseHp(-100);
+					player->SetActive(false);
+				}
+			}
+
+
+			// ドアに当たると回転する（プレイヤー3）
+			if (player2->GetHitflg() == false) {
+				if (IsHitDoorR3(player3, player2))
+				{
+					ptimer2 = 0;
+					player2->DecreaseHp(-100);
+					player2->SetActive(false);
+				}
+
+				if (IsHitDoorL3(player3, player2))
+				{
+					ptimer2 = 0;
+					player2->DecreaseHp(-100);
+					player2->SetActive(false);
+				}
+			}
+
+
+		}
+
+
+
+
+		/*
 		if (player3->GetAttackflg() == TRUE)
 		{
 			// ドアに当たると回転する（プレイヤー１）
@@ -376,30 +441,9 @@ eSceneType GameMainScene::Update()
 			}
 
 
-			// ドアに当たると回転する(プレイヤー２)
-			if (player2->GetHitflg() == false) {
-				if (IsHitDoorR(player2, player3))
-				{
-					if (player2->GetHitflg() == false)
-					{
-						ptimer2 = 0;
-						player2->DecreaseHp(-100);
-						player2->SetActive(false);
-					}
-				}
-
-				if (IsHitDoorL(player2, player3))
-				{
-					if (player2->GetHitflg() == false)
-					{
-						ptimer2 = 0;
-						player2->DecreaseHp(-100);
-						player2->SetActive(false);
-					}
-				}
 			}
 
-
+		*/
 		}
 
 		for (int i = 0; i < 10; i++)
@@ -424,6 +468,16 @@ eSceneType GameMainScene::Update()
 
 			if (item[i] != nullptr)
 			{
+				if (IsHitItem(player3, item[i]))
+				{
+					player3->SetActive(false);
+					item[i] = nullptr;
+				}
+			}
+
+
+			if (item[i] != nullptr)
+			{
 				if (item[i]->GetLocation().y > 700)
 				{
 					item[i]->ResetY(0);
@@ -441,7 +495,6 @@ eSceneType GameMainScene::Update()
 	{
 		return eSceneType::E_RESULT;
 	}*/
-	}
 
 	if (p1win > 2)
 	{
@@ -507,7 +560,7 @@ void GameMainScene::Draw() const
 	player->Draw();
 	//PAD2プレイヤーの描画
 	player2->Draw();
-
+	//PAD3 プレイヤーの描画
 	player3->Draw();
 
 	//パトカーの描画
@@ -523,8 +576,6 @@ void GameMainScene::Draw() const
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 		SetFontSize(40);
-		DrawString(800, 300, "player1", GetColor(255, 255, 255));
-		DrawString(280, 300, "player2", GetColor(255, 255, 255));
 
 		if (whowin == 2)
 		{
@@ -533,6 +584,21 @@ void GameMainScene::Draw() const
 		else if (whowin == 1)
 		{
 			DrawString(800, 340, "Win!!", GetColor(255, 255, 255));
+		}
+
+		switch (whowin)
+		{
+		case 1:
+			DrawString(800, 300, "player1", GetColor(255, 255, 255));
+			break;
+		case 2:
+			DrawString(280, 300, "player2", GetColor(255, 255, 255));
+			break;
+		case 3:
+			DrawString(280, 300, "player3", GetColor(255, 255, 255));
+			break;
+		default:
+			break;
 		}
 
 		for (int i = 0; i < p1win; i++)
@@ -576,18 +642,45 @@ void GameMainScene::win()
 	{
 		//三回分の勝ち負けを記録する
 		//プレイヤー１が死んだ場合
-		if (player->GetDeathFlg() == true)
+		//if (player->GetDeathFlg() == true)
+		//{
+		//	p2win++;
+		//	whowin = 2;
+		//}
+		////プレイヤー２が死んだ場合
+		//if (player2->GetDeathFlg() == true)
+		//{
+		//	p1win++;
+		//	whowin = 1;
+		//}
+
+		for (int i = 0; i <= 2; i++)
 		{
-			p2win++;
-			whowin = 2;
+			if (whoLose[i] == 0)
+			{
+				switch (i)
+				{
+				case 0:
+					p1win++;
+					whowin = 1;
+					break;
+				case 1:
+					p2win++;
+					whowin = 2;
+					break;
+				case 2:
+					p3win++;
+					whowin = 3;
+					break;
+				case 3:
+					break;
+				default:
+					break;
+				}
+			}
 		}
 
-		//プレイヤー２が死んだ場合
-		if (player2->GetDeathFlg() == true)
-		{
-			p1win++;
-			whowin = 1;
-		}
+		
 	}
 
 	winflg = true;
@@ -604,6 +697,7 @@ void GameMainScene::win()
 			//オブジェクトの初期化
 			player->Initialize(0, 400);
 			player2->Initialize(1, 200);
+			player3->Initialize(2, 650);
 
 			Pcar->Initialize();
 
@@ -612,6 +706,12 @@ void GameMainScene::win()
 				item[i] = new Item;
 				item[i]->Initialize(GetRand(10));
 			}
+
+			for (int i = 0; i < 2; i++)
+			{
+				whoLose[i] = 0;
+			}
+
 			count = 0;
 			timer = 0;
 
@@ -620,6 +720,7 @@ void GameMainScene::win()
 			startnum = 3;
 			alpha = 0;
 			winflg = false;
+			wFlg = false;
 		}
 	}
 
@@ -685,6 +786,28 @@ bool GameMainScene::IsHitCheckP2(Player* p2, Policecar* car)
 
 }
 
+bool GameMainScene::IsHitCheckP3(Player* p3, Policecar* car)
+{
+
+	//敵情報が無ければ、当たり判定を無視する
+	if (car == nullptr)
+	{
+		return false;
+	}
+
+	//位置情報の差分を取得
+	Vector2D diff_location = p3->GetLocation() - car->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p3->GetBoxSize() + car->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+
+
 bool GameMainScene::IsHitCheckPlayer(Player* p, Player* p2)
 {
 	//位置情報の差分を取得
@@ -697,6 +820,36 @@ bool GameMainScene::IsHitCheckPlayer(Player* p, Player* p2)
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
 
 }
+
+
+bool GameMainScene::IsHitCheckPlayer2(Player* p2, Player* p3)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p2->GetLocation() - p3->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p2->GetBoxSize() + p3->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+
+bool GameMainScene::IsHitCheckPlayer3(Player* p, Player* p3)
+{
+	//位置情報の差分を取得
+	Vector2D diff_location = p->GetLocation() - p3->GetLocation();
+
+	//当たり判定サイズの大きさを取得
+	Vector2D box_ex = p->GetBoxSize() + p3->GetBoxSize();
+
+	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+}
+
+
 
 // プレイヤーのドアの当たり判定（右）
 bool GameMainScene::IsHitDoorR(Player* p1, Player* p2)
@@ -715,7 +868,6 @@ bool GameMainScene::IsHitDoorR(Player* p1, Player* p2)
 	
 
 }
-
 // プレイヤーのドアの当たり判定（左）
 bool GameMainScene::IsHitDoorL(Player* p1, Player* p2)
 {
@@ -734,6 +886,7 @@ bool GameMainScene::IsHitDoorL(Player* p1, Player* p2)
 	}
 
 }
+
 
 // プレイヤー2のドアの当たり判定（右）
 bool GameMainScene::IsHitDoorR2(Player* p1, Player* p2)
@@ -754,12 +907,11 @@ bool GameMainScene::IsHitDoorR2(Player* p1, Player* p2)
 	}
 
 }
-
 // プレイヤー2のドアの当たり判定（左）
 bool GameMainScene::IsHitDoorL2(Player* p1, Player* p2)
 {
 
-	if (player2->GetBflg() == true)
+	if (player2->GetXflg() == true)
 	{
 
 		//位置情報の差分を取得
@@ -774,6 +926,49 @@ bool GameMainScene::IsHitDoorL2(Player* p1, Player* p2)
 	}
 
 }
+
+
+// プレイヤー3のドアの当たり判定（右）
+bool GameMainScene::IsHitDoorR3(Player* p3, Player* p)
+{
+
+	if (player3->GetBflg() == true)
+	{
+
+		//位置情報の差分を取得
+		Vector2D diff_location = p3->GetDoorRLocation() - p->GetLocation();
+
+		//当たり判定サイズの大きさを取得
+		Vector2D box_ex = p3->GetDoorRSize() + p->GetBoxSize();
+
+		//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+		return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+	}
+
+}
+// プレイヤー2のドアの当たり判定（左）
+bool GameMainScene::IsHitDoorL3(Player* p3, Player* p)
+{
+
+	if (player3->GetXflg() == true)
+	{
+
+		//位置情報の差分を取得
+		Vector2D diff_location = p3->GetDoorLLocation() - p->GetLocation();
+
+		//当たり判定サイズの大きさを取得
+		Vector2D box_ex = p3->GetDoorLSize() + p->GetBoxSize();
+
+		//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
+		return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+
+	}
+
+}
+
+
+
 
 bool GameMainScene::IsHitCheckItem(Player* p, Item* i)
 {
@@ -797,4 +992,37 @@ bool GameMainScene::IsHitItem(Player* p2, Item* i)
 
 	//コリジョンデータより位置情報の差分が小さいなら、ヒット判定とする
 	return((fabsf(diff_location.x) < box_ex.x) && (fabsf(diff_location.y) < box_ex.y));
+}
+
+
+void GameMainScene::checkhum()
+{
+	howmany = 0;
+	if (player->GetDeathFlg() == true)
+	{
+		whoLose[0] = 1;
+	}
+	if (player2->GetDeathFlg()==true)
+	{
+		whoLose[1] = 1;
+	}
+	if (player3->GetDeathFlg() == true)
+	{
+		whoLose[2] = 1;
+	}
+
+	//今死んでる人数を数える
+	for (int i = 0; i < 3; i++)
+	{
+		if (whoLose[i] == 1)
+		{
+			howmany++;
+		}
+	}
+
+	if (howmany >= 2)
+	{
+		wFlg = true;
+	}
+	
 }

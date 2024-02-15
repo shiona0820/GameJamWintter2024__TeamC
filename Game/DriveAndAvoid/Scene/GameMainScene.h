@@ -73,4 +73,7 @@ private:
 	bool IsHitCheckItem(Player* p, Item* i);
 	bool IsHitItem(Player* p2, Item* i);
 
+	// アイテムとパトカーの当たり判定
+	bool IsHitItem_Police(Item* i, Policecar* p);
+
 };

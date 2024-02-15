@@ -58,6 +58,12 @@ private:
 
 	bool sliponce;
 
+	int serif;
+	int serif2;
+
+	bool serifFlg;//ŠÏ‹q‚Ì‚Æ‚±‚ë‚É“ü‚Á‚½‚ç
+	int serifcount;
+
 public:
 	Player();
 	~Player();

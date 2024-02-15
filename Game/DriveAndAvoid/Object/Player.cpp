@@ -112,7 +112,10 @@ void Player::Initialize(int pnum,float x)
 		break;
 	}
 
-
+	serif = LoadGraph("Resource/images/serif.png");
+	serif2 = LoadGraph("Resource/images/serif2.png");
+	serifFlg = false;
+	serifcount = 0;
 
 	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
 
@@ -307,6 +310,13 @@ void Player::Draw()
 				DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
 				//画像透かし終わり
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 			}
 			else
 			{
@@ -382,7 +392,29 @@ void Player::Draw()
 
 	}
 
+	if (serifFlg==true)
+	{
+		//悲鳴つける
+		if (serifcount < 50)
+		{
+			DrawGraph(location.x - 200, location.y - 200, serif, TRUE);
+		}
+		
+		if (serifcount >= 50)
+		{
+			DrawGraph(location.x - 200, location.y - 200, serif2, TRUE);
+			if (serifcount > 100)
+			{
+				serifcount = 0;
+			}
+		}
+		serifcount++;
 
+	
+
+	
+		
+	}
 		// 爆発アニメーションの描画
 		if (hp <= 0 && exNum <= 2)
 		{
@@ -527,6 +559,7 @@ int Player::GetBflg() const
 {
 	return this->Bflg;
 }
+
 int Player::GetXflg() const
 {
 	return this->Xflg;
@@ -571,7 +604,13 @@ void Player::Movement()
 	if ((location.x < 120) || (location.x >= 1160.0f))
 	{
 		location -= direction;
+		serifFlg = true;
+	}
+	else
+	{
+		serifcount = 0;
 
+		serifFlg = false;
 	}
 
 	//画面外に出ないように
@@ -735,7 +774,10 @@ void Player::Explosion()
 	explosion_count++;
 	if (CheckSoundMem(explosion_sound) == false)
 	{
-		PlaySoundMem(explosion_sound, DX_PLAYTYPE_BACK, FALSE);
+		if (death_flg == false)
+		{
+			PlaySoundMem(explosion_sound, DX_PLAYTYPE_BACK, TRUE);
+		}
 	}
 	switch (explosion_count)
 	{

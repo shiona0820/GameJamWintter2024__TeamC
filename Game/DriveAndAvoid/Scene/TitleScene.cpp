@@ -74,7 +74,7 @@ eSceneType TitleScene::Update()
 
 			menu_cursor++;
 			//1”Ô‰º‚É“’B‚µ‚½‚çA‚P”Ôã‚É‚·‚é
-			if (menu_cursor > 3)
+			if (menu_cursor > 2)
 			{
 				menu_cursor = 0;
 			}
@@ -100,6 +100,7 @@ eSceneType TitleScene::Update()
 			{
 			case 0:
 				PlaySoundMem(buttonON_sound, DX_PLAYTYPE_BACK, TRUE);
+				StopSoundMem(title_sound);
 				return eSceneType::E_MAIN;
 			case 1:
 				PlaySoundMem(buttonON_sound, DX_PLAYTYPE_BACK, TRUE);
@@ -150,7 +151,9 @@ void TitleScene::Draw() const
 void TitleScene::Finalize()
 {
 
-	
+	DeleteSoundMem(button_sound);
+	DeleteSoundMem(buttonON_sound);
+	DeleteSoundMem(buttonNO_sound);
 
 	//“Ç‚İ‚ñ‚¾‰æ‘œ‚Ìíœ
 	DeleteGraph(background_image);

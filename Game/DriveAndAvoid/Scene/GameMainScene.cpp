@@ -145,7 +145,10 @@ eSceneType GameMainScene::Update()
 			{
 				seflg = true;
 				//カウントダウンSE
-				PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, FALSE);
+				if (CheckSoundMem(countdown_sound) == false)
+				{
+					PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, TRUE);
+				}
 			}
 
 			// カウントダウン後にゲーム開始
@@ -185,6 +188,7 @@ eSceneType GameMainScene::Update()
 			{
 				checkhum();
 			}
+
 			//メインBGM
 			PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
 			PlaySoundMem(kansei_sound, DX_PLAYTYPE_LOOP, FALSE);

@@ -9,7 +9,7 @@ Item::Item()
 
 	//locationの初期化
 	location.x = 0;
-	location.y = 0;
+	location.y = -10;
 	//当たり判定のボックスの設定
 	box_size = Vector2D(5.0f, 10.0f);
 
@@ -54,11 +54,38 @@ void Item::Update()
 
 		
 		speed = 1.0f;
-		if (location.x > 1350 || location.y>720 || location.x < -10)
+		if (location.x > 1350 || location.y>720 || location.x < -20)
 		{
 			hitflg = false;
 			angle = 0;
 		}
+
+		if (hitflg == true)
+		{
+
+			if (location.x > 640)
+			{
+				location.x += 10;
+				angle += DX_PI_F / 24.0f;
+			}
+			else
+			{
+				location.x -= 10;
+				angle += DX_PI_F / -24.0f;
+			}
+
+			//Attackflg = false;
+
+
+			speed = 1.0f;
+			if (location.x > 1350 || location.y > 720 || location.x < -5)
+			{
+				hitflg = false;
+				angle = 0;
+			}
+
+		}
+
 		return;
 			
 	
@@ -68,7 +95,7 @@ void Item::Update()
 void Item::Draw() const 
 {
 	//障害物（三角コーン）画像の描画
-	DrawRotaGraph(location.x, 10 + location.y, 0.7, 0.0, coneimage, true);
+	DrawRotaGraph(location.x, 10 + location.y, 0.7, angle, coneimage, true);
 }
 
 //位置情報を取得

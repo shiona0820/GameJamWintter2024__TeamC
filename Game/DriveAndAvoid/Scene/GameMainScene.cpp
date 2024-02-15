@@ -662,7 +662,7 @@ eSceneType GameMainScene::Update()
 
 			if (item[i] != nullptr)
 			{
-				if (item[i]->GetLocation().y > 700)
+				if (item[i]->GetLocation().y > 720)
 				{
 					item[i]->ResetY(-10);
 					item[i]->Initialize(GetRand(10));

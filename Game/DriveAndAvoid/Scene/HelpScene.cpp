@@ -18,6 +18,11 @@ void HelpScene::Initialize()
 	//画像の読み込み
 	help_image = LoadGraph("Resource/images/Help.png");
 
+	//SEの読み込み
+	buttonNO_sound = LoadSoundMem("Resource/sound/buttonNO.mp3");
+	//音量設定
+	ChangeVolumeSoundMem(255 * 80 / 100, buttonNO_sound);
+
 	//エラーチェック
 	if (help_image == -1)
 	{
@@ -31,6 +36,7 @@ eSceneType HelpScene::Update()
 	//Bボタンが押されたら、タイトルに戻る
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_B,0))
 	{
+		PlaySoundMem(buttonNO_sound, DX_PLAYTYPE_BACK, TRUE);
 		return eSceneType::E_TITLE;
 	}
 	return GetNowScene();

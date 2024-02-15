@@ -11,7 +11,7 @@ Item::Item()
 	location.x = 0;
 	location.y = 0;
 	//当たり判定のボックスの設定
-	box_size = Vector2D(5.0f, 10.0f);
+	box_size = Vector2D(20.0f, 25.0f);
 }
 
 //デストラクタ

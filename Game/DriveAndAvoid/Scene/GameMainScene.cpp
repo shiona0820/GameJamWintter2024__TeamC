@@ -214,15 +214,15 @@ eSceneType GameMainScene::Update()
 			}
 			if (player2->GetSurvival_flg() == false)
 			{
-				player2->deathset(100000);
+				player2->deathset(120000);
 			}
 			if (player3->GetSurvival_flg() == false)
 			{
-				player3->deathset(100000);
+				player3->deathset(130000);
 			}
 			if (player4->GetSurvival_flg() == false)
 			{
-				player4->deathset(100000);
+				player4->deathset(140000);
 			}
 
 

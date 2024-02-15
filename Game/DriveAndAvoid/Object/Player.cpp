@@ -58,33 +58,44 @@ void Player::Initialize(int pnum,float x)
 	exNum = 0;
 
 	//‰æ‘œ‚Ì“Ç‚İ‚İ
-	if (pnum == 0)
+	switch (pnum)
 	{
+	case 0:
 		image = LoadGraph("Resource/images/car2.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor_L.png");
 		doorRimg = LoadGraph("Resource/images/Door_R.png");
 		doorLimg = LoadGraph("Resource/images/Door_L.png");
-	}
-	else if(pnum==1)
-	{
+		break;
+	case 1:
 		//player2‰æ‘œ‚Ì“Ç‚İ‚İ
 		image = LoadGraph("Resource/images/car3.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor2_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor2_L.png");
 		doorRimg = LoadGraph("Resource/images/Door2_R.png");
 		doorLimg = LoadGraph("Resource/images/Door2_L.png");
-	}
-	else if (pnum == 2)
-	{
+		break;
+	case 2:
 		//player3‰æ‘œ‚Ì“Ç‚İ‚İ
 		image = LoadGraph("Resource/images/car1.png");
 		carRimg = LoadGraph("Resource/images/OpenDoor3_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor3_L.png");
 		doorRimg = LoadGraph("Resource/images/Door3_R.png");
 		doorLimg = LoadGraph("Resource/images/Door3_L.png");
-
+		break;
+	case 3:
+		//player4‰æ‘œ‚Ì“Ç‚İ‚İ
+		image = LoadGraph("Resource/images/car4.png");
+		carRimg = LoadGraph("Resource/images/OpenDoor4_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor4_L.png");
+		doorRimg = LoadGraph("Resource/images/Door4_R.png");
+		doorLimg = LoadGraph("Resource/images/Door4_L.png");
+		break;
+	default:
+		break;
 	}
+
+
 
 	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
 

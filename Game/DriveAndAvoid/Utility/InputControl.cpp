@@ -21,6 +21,13 @@ bool InputControl::old_button3[16] = {};
 float InputControl::trigger3[2] = {};
 Vector2D InputControl::stick3[2] = {};
 
+//PAD4
+//静的メンバ変数定義
+bool InputControl::now_button4[16] = {};
+bool InputControl::old_button4[16] = {};
+float InputControl::trigger4[2] = {};
+Vector2D InputControl::stick4[2] = {};
+
 
 //入力機能：更新処理
 void InputControl::Update()
@@ -29,9 +36,11 @@ void InputControl::Update()
 	XINPUT_STATE input_state = {};
 	XINPUT_STATE input_state2 = {};
 	XINPUT_STATE input_state3 = {};
+	XINPUT_STATE input_state4 = {};
 	GetJoypadXInputState(DX_INPUT_PAD1, &input_state);
 	GetJoypadXInputState(DX_INPUT_PAD2, &input_state2);
 	GetJoypadXInputState(DX_INPUT_PAD3, &input_state3);
+	GetJoypadXInputState(DX_INPUT_PAD4, &input_state4);
 
 	//ボタン入力値の更新
 	for (int i = 0; i < 16; i++)
@@ -180,6 +189,54 @@ void InputControl::Update()
 		stick3[1].y = -((float)input_state3.ThumbRY / (float)SHRT_MIN);
 	}
 
+	/*Pad4*/
+
+	//ボタン入力値の更新
+	for (int i = 0; i < 16; i++)
+	{
+		old_button4[i] = now_button4[i];
+		now_button4[i] = (bool)input_state4.Buttons[i];
+	}
+
+	//トリガー入力値の更新（0.0ｆ～1.0ｆに範囲を制限する）
+	trigger4[0] = (float)input_state4.LeftTrigger / (float)UCHAR_MAX;
+	trigger4[1] = (float)input_state4.RightTrigger / (float)UCHAR_MAX;
+
+	//左スティック入力値の更新（-1.0ｆ～1.0ｆに範囲を制限する）
+	if (input_state4.ThumbLX > 0.0f)
+	{
+		stick4[0].x = (float)input_state4.ThumbLX / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick4[0].x = -((float)input_state4.ThumbLX / (float)SHRT_MIN);
+	}
+	if (input_state4.ThumbLY > 0.0f)
+	{
+		stick4[0].y = (float)input_state4.ThumbLY / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick4[0].y = -((float)input_state4.ThumbLY / (float)SHRT_MIN);
+	}
+
+	//右スティック入力値の更新（-1.0～1.0fに範囲を制限する）
+	if (input_state4.ThumbRX > 0.0f)
+	{
+		stick4[1].x = (float)input_state4.ThumbRX / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick4[1].x = -((float)input_state4.ThumbRX / (float)SHRT_MIN);
+	}
+	if (input_state4.ThumbRY > 0.0f)
+	{
+		stick4[1].y = (float)input_state4.ThumbRY / (float)SHRT_MAX;
+	}
+	else
+	{
+		stick4[1].y = -((float)input_state4.ThumbRY / (float)SHRT_MIN);
+	}
 
 }
 
@@ -198,6 +255,9 @@ bool InputControl::GetButton(int button,int cnum)
 		break;
 	case 2:
 		return CheckButtonRange(button) && (now_button3[button] && old_button3[button]);
+		break;
+	case 3:
+		return CheckButtonRange(button) && (now_button4[button] && old_button4[button]);
 		break;
 	default:
 		break;
@@ -221,7 +281,9 @@ bool InputControl::GetButtonDown(int button,int cnum)
 		break;
 	case 2:
 		return CheckButtonRange(button) && (now_button3[button] && !old_button3[button]);
-
+		break;
+	case 3:
+		return CheckButtonRange(button) && (now_button4[button] && old_button4[button]);
 		break;
 	default:
 		break;
@@ -252,7 +314,9 @@ bool InputControl::GetButtonUp(int button, int cnum)
 		break;
 	case 2:
 		return CheckButtonRange(button) && (now_button3[button] && !old_button3[button]);
-
+		break;
+	case 3:
+		return CheckButtonRange(button) && (now_button4[button] && old_button4[button]);
 		break;
 	default:
 		break;

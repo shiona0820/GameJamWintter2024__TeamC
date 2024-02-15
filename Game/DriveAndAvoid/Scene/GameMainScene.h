@@ -26,6 +26,7 @@ private:
 	Player* player;     //プレイヤー
 	Player* player2;     //プレイヤー2
 	Player* player3;     //プレイヤー3
+	Player* player4;     //プレイヤー4
 	Enemy** enemy;       //敵
 	Policecar* Pcar;     //パトカー
 	
@@ -38,6 +39,7 @@ private:
 	int ptimer;
 	int ptimer2;
 	int ptimer3;
+	int ptimer4;
 
 	int time;//アクション起きた時の時間を渡す用
 	bool flg;
@@ -46,6 +48,7 @@ private:
 	int p1win;//勝ったら＋１
 	int p2win;
 	int p3win;
+	int p4win;
 	int starimg;
 
 	bool winflg;
@@ -76,6 +79,8 @@ private:
 	bool IsHitCheckPlayer(Player* p, Player* p2);
 	bool IsHitCheckPlayer2(Player* p2, Player* p3);
 	bool IsHitCheckPlayer3(Player* p, Player* p3);
+	bool IsHitCheckPlayer4(Player* p, Player* p3);
+
 	bool IsHitCheckP1(Player* p,Policecar* car);
 	bool IsHitCheckP2(Player* p2,Policecar* car);
 	bool IsHitCheckP3(Player* p3,Policecar* car);
@@ -91,6 +96,10 @@ private:
 	//// ドアの当たり判定（プレイヤー３）
 	bool IsHitDoorR3(Player* p1, Player* p3);
 	bool IsHitDoorL3(Player* p1, Player* p3);
+
+	//// ドアの当たり判定（プレイヤー4）
+	bool IsHitDoorR4(Player* p4, Player* p);
+	bool IsHitDoorL4(Player* p4, Player* p);
 
 
 	//アイテムの当たり判定

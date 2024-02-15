@@ -3,7 +3,9 @@
 #include"DxLib.h"
 #include<math.h>
 
-GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0),
+int back_sound;
+
+GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0), back_sound(NULL),
 audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
@@ -29,6 +31,18 @@ void GameMainScene::Initialize()
 	//画像の読み込み
 	back_ground = LoadGraph("Resource/images/back1.bmp");
 	audience_img = LoadGraph("Resource/images/audience.png");
+
+
+	//BGMの読み込み
+	back_sound = LoadSoundMem("Resource/sound/BGM1.MP3");
+	//BGMの音量設定
+	ChangeVolumeSoundMem(255 * 50 / 100, back_sound);
+	//BGMのエラーチェック
+	if (back_sound == -1)
+	{
+		throw("Resource/sound/BGM1.MP3がありません");
+	}
+
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -83,6 +97,9 @@ void GameMainScene::Initialize()
 //更新処理
 eSceneType GameMainScene::Update()
 {
+
+	//BGMの再生
+	PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
 
 
 	//プレイヤーの更新

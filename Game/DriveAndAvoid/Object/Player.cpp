@@ -56,30 +56,51 @@ void Player::Initialize(int pnum,float x)
 	alpha = 0;
 	hpcheck = 0;
 
+	death_flg = false;
+
 	// 爆発アニメーション用カウント
 	explosion_count = 0;
 	exNum = 0;
 
 	//画像の読み込み
-	if (pnum == 0)
+	switch (pnum)
 	{
+	case 0:
 		image = LoadGraph("Resource/images/car2.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor_L.png");
 		doorRimg = LoadGraph("Resource/images/Door_R.png");
 		doorLimg = LoadGraph("Resource/images/Door_L.png");
-	}
-	else if(pnum==1)
-	{
+		break;
+	case 1:
 		//player2画像の読み込み
 		image = LoadGraph("Resource/images/car3.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor2_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor2_L.png");
 		doorRimg = LoadGraph("Resource/images/Door2_R.png");
 		doorLimg = LoadGraph("Resource/images/Door2_L.png");
-
-
+		break;
+	case 2:
+		//player3画像の読み込み
+		image = LoadGraph("Resource/images/car1.png");
+		carRimg = LoadGraph("Resource/images/OpenDoor3_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor3_L.png");
+		doorRimg = LoadGraph("Resource/images/Door3_R.png");
+		doorLimg = LoadGraph("Resource/images/Door3_L.png");
+		break;
+	case 3:
+		//player4画像の読み込み
+		image = LoadGraph("Resource/images/car4.png");
+		carRimg = LoadGraph("Resource/images/OpenDoor4_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor4_L.png");
+		doorRimg = LoadGraph("Resource/images/Door4_R.png");
+		doorLimg = LoadGraph("Resource/images/Door4_L.png");
+		break;
+	default:
+		break;
 	}
+
+
 
 	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
 
@@ -98,6 +119,11 @@ void Player::Update()
 	//hpの値をもらう
 	hpcheck = hp;
 
+	if (hp <= 0)
+	{
+		death_flg = true;
+	}
+
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active && exNum <= 2)
 	{
@@ -108,20 +134,23 @@ void Player::Update()
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
 		speed = 1.0f;
-		blinkingcun++;
-		switch (blinkingcun)
+		if (hit_flg == true)
 		{
-		case(1):
-			blinking_flg = true;
-			break;
-		case(3):
-			blinking_flg = false;
-			break;
-		case(6):
-			blinkingcun = 0;
-			break;
-		default:
-			break;
+			blinkingcun++;
+			switch (blinkingcun)
+			{
+			case(1):
+				blinking_flg = true;
+				break;
+			case(3):
+				blinking_flg = false;
+				break;
+			case(6):
+				blinkingcun = 0;
+				break;
+			default:
+				break;
+			}
 		}
 		if (angle >= DX_PI_F * 4.0f)
 		{
@@ -226,7 +255,19 @@ void Player::Draw()
 
 		//DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
 		////プレイヤー画像の描画
-		//DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+		if (blinking_flg == true)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		}
+		else
+		{
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+		}
 
 		if (Attackflg == false/* && exNum < 2*/)
 		{
@@ -322,43 +363,6 @@ void Player::Draw()
 			DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
 		}
 
-		//switch (playerd)
-		//{
-		//case 0:
-		//	//左下
-		//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
-		//	break;
-		//case 1:
-		//	//右下
-		//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
-		//	break;
-		//case 2:
-		//	//左上
-		//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
-		//	break;
-		//case 3:
-		//	//右上
-		//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
-		//	break;
-		//case 4:
-		//	//右上
-		//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
-		//	break;
-		//default:
-		//	break;
-		//}
-		//DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
-		//DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
-		//攻撃のロケーション
-		//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
-		//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
-		//DrawFormatString(location.x, 300, GetColor(255, 255, 255), "DLx%f",DoorLlocation.x);
-		//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
-
-
-		//DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
-
-	
 }
 
 //終了処理
@@ -398,6 +402,11 @@ bool Player::GetHitflg() const
 bool Player::GetSurvival_flg() const
 {
 	return this->survival_flg;;
+}
+
+bool Player::GetDeathFlg() const
+{
+	return this->death_flg;
 }
 
 void Player::Hitflg(bool flg)

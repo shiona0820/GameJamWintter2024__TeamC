@@ -76,6 +76,8 @@ public:
 
 	bool GetSurvival_flg() const;	// 爆発した後用フラグ（爆発後falseになる）
 
+	bool GetDeathFlg() const;//敗北取得
+
 	// ボタンフラグを返す
 	int GetBflg() const;
 	int GetXflg() const;

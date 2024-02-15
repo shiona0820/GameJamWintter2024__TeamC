@@ -16,6 +16,16 @@ private:
 	static float trigger2[2];          //左右トリガー入力値
 	static Vector2D stick2[2];         //左右スティック入力値
 
+	static bool now_button3[16];       //現在フレーム入力値
+	static bool old_button3[16];       //過去フレーム入力値
+	static float trigger3[2];          //左右トリガー入力値
+	static Vector2D stick3[2];         //左右スティック入力値
+
+	static bool now_button4[16];       //現在フレーム入力値
+	static bool old_button4[16];       //過去フレーム入力値
+	static float trigger4[2];          //左右トリガー入力値
+	static Vector2D stick4[2];         //左右スティック入力値
+
 public:
 	static void Update();             //更新処理
 

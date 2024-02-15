@@ -134,20 +134,23 @@ void Player::Update()
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
 		speed = 1.0f;
-		blinkingcun++;
-		switch (blinkingcun)
+		if (hit_flg == true)
 		{
-		case(1):
-			blinking_flg = true;
-			break;
-		case(3):
-			blinking_flg = false;
-			break;
-		case(6):
-			blinkingcun = 0;
-			break;
-		default:
-			break;
+			blinkingcun++;
+			switch (blinkingcun)
+			{
+			case(1):
+				blinking_flg = true;
+				break;
+			case(3):
+				blinking_flg = false;
+				break;
+			case(6):
+				blinkingcun = 0;
+				break;
+			default:
+				break;
+			}
 		}
 		if (angle >= DX_PI_F * 4.0f)
 		{
@@ -252,7 +255,19 @@ void Player::Draw()
 
 		//DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
 		////ÉvÉåÉCÉÑÅ[âÊëúÇÃï`âÊ
-		//DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+		if (blinking_flg == true)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		}
+		else
+		{
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+		}
 
 		if (Attackflg == false/* && exNum < 2*/)
 		{

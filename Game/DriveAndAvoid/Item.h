@@ -13,6 +13,9 @@ private:
 	Vector2D box_size;
 	Player player;
 
+	float angle;
+	float speed;
+
 	bool hitflg;
 
 public:

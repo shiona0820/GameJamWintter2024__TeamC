@@ -51,7 +51,6 @@ void Item::Update()
 {
 	//ƒR[ƒ“‚ğ“®‚©‚·(yÀ•W)
 	location.y++;
-}
 
 		
 		speed = 1.0f;
@@ -62,7 +61,6 @@ void Item::Update()
 		}
 		return;
 			
-	}
 	
 }
 

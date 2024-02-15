@@ -13,7 +13,7 @@ Item::Item()
 	}
 	gWaitTime = 100;
 	location.x = 0;
-	location.y = 0;
+	location.y = -10;
 	box_size = Vector2D(5.0f, 10.0f);
 
 	angle = 0.0f;
@@ -91,7 +91,7 @@ void Item::Update()
 
 		
 		speed = 1.0f;
-		if (location.x > 1350 || location.y>720 || location.x < -5)
+		if (location.x > 1350 || location.y>720 || location.x < -10)
 		{
 			hitflg = false;
 			angle = 0;

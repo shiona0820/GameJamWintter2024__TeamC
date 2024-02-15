@@ -30,6 +30,9 @@ private:
 
 	bool survival_flg;	// ¶‘¶ƒtƒ‰ƒO
 
+	int blinkingcun;
+	bool blinking_flg;
+
 	// UŒ‚‚Ì‰æ‘œ
 	int carRimg, carLimg, doorRimg, doorLimg;
 

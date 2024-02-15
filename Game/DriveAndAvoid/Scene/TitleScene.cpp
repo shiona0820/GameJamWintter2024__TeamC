@@ -18,7 +18,7 @@ void TitleScene::Initialize()
 {
 	//画像の読み込み
 	background_image = LoadGraph("Resource/images/Title.png");
-	menu_image = LoadGraph("Resource/images/menu.bmp");
+	menu_image = LoadGraph("Resource/images/menu.png");
 	cursor_image = LoadGraph("Resource/images/cone.bmp");
 
 	//エラーチェック
@@ -57,7 +57,7 @@ eSceneType TitleScene::Update()
 		//1番上に到達したら、１番下にする
 		if (menu_cursor < 0)
 		{
-			menu_cursor = 3;
+			menu_cursor = 2;
 		}
 	}
 
@@ -69,8 +69,6 @@ eSceneType TitleScene::Update()
 		case 0:
 			return eSceneType::E_MAIN;
 		case 1:
-			return eSceneType::E_RANKING_DISP;
-		case 2:
 			return eSceneType::E_HELP;
 		default:
 			return eSceneType::E_END;
@@ -88,10 +86,10 @@ void TitleScene::Draw() const
 	DrawExtendGraph(0, 0, 1280, 720, background_image, FALSE);
 
 	//メニュー画面の描画
-	DrawGraph(120, 200, menu_image, TRUE);
+	DrawGraph(150, 300, menu_image, TRUE);
 
 	//カーソル画像の描画
-	DrawRotaGraph(90, 220 + menu_cursor * 40, 0.7, DX_PI / 2.0, cursor_image, TRUE);
+	DrawRotaGraph(110, 340 + menu_cursor * 90, 0.7, DX_PI / 2.0, cursor_image, TRUE);
 }
 
 //終了処理

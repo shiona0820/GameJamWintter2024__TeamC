@@ -31,11 +31,35 @@ void Item::ResetY(float y)
 	location.y = y;
 }
 
+bool Item::GetHitflg() const
+{
+	return this->hitflg;
+}
+
+void Item::Hitflg(bool flg)
+{
+	this->hitflg = flg;
+}
+
+
 //更新
 void Item::Update()
 {
 	//コーンを動かす(y座標)
 	location.y++;
+}
+
+		
+		speed = 1.0f;
+		if (location.x > 1350 || location.y>720 || location.x < -10)
+		{
+			hitflg = false;
+			angle = 0;
+		}
+		return;
+			
+	}
+	
 }
 
 //描画

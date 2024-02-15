@@ -28,6 +28,11 @@ private:
 	bool hit_flg;//攻撃があたったら
 	bool death_flg;//負けフラグ
 
+	bool survival_flg;	// 生存フラグ
+
+	int blinkingcun;
+	bool blinking_flg;
+
 	// 攻撃時の画像
 	int carRimg, carLimg, doorRimg, doorLimg;
 
@@ -68,6 +73,8 @@ public:
 	int GetBarriarCount() const;         //バリアの枚数取得
 	bool IsBarrier() const;         //バリア有効かを取得
 	bool GetHitflg() const;//HPを減らすのを一回だけにする用
+
+	bool GetSurvival_flg() const;	// 爆発した後用フラグ（爆発後falseになる）
 
 	// ボタンフラグを返す
 	int GetBflg() const;

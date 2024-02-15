@@ -13,6 +13,8 @@ private:
 	Vector2D box_size;
 	Player player;
 
+	bool hitflg;
+
 public:
 	Item();
 	~Item();
@@ -20,6 +22,9 @@ public:
 	void Draw()const;
 	void Initialize(int x);             //‰Šú‰»ˆ—
 	void ResetY(float y);
+
+	bool GetHitflg() const;
+	void Hitflg(bool flg);
 
 	Vector2D GetLocation() const; //ˆÊ’uî•ñ‚Ìæ“¾
 	Vector2D GetBoxSize() const;  //“–‚½‚è”»’è‚Ì‘å‚«‚³‚ğæ“¾

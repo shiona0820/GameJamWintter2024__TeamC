@@ -10,7 +10,10 @@ private:
 	int background_image;        //背景画像
 	int menu_image;             //メニュー画像
 	int cursor_image;           //カーソル画像
+	int end_image;
 	int menu_cursor;            //メニューカーソル番号
+	int end_cun;
+	bool end;
 
 	int title_sound;   //タイトルBGM
 	int button_sound;  //ボタン移動SE

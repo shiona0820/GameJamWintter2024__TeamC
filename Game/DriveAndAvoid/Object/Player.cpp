@@ -30,6 +30,11 @@ void Player::Initialize(int pnum,float x)
 	playernum = pnum;
 	playerd = 0;
 
+	survival_flg = true;
+
+	blinkingcun = 0;
+	blinking_flg = false;
+
 	Acount = 0;
 	Bflg = false;
 	Xflg = false;
@@ -51,6 +56,8 @@ void Player::Initialize(int pnum,float x)
 	alpha = 0;
 	hpcheck = 0;
 
+	death_flg = false;
+
 	// 爆発アニメーション用カウント
 	explosion_count = 0;
 	exNum = 0;
@@ -68,25 +75,44 @@ void Player::Initialize(int pnum,float x)
 	ChangeVolumeSoundMem(255, taiatari_sound);
 
 	//画像の読み込み
-	if (pnum == 0)
+	switch (pnum)
 	{
+	case 0:
 		image = LoadGraph("Resource/images/car2.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor_L.png");
 		doorRimg = LoadGraph("Resource/images/Door_R.png");
 		doorLimg = LoadGraph("Resource/images/Door_L.png");
-	}
-	else if(pnum==1)
-	{
+		break;
+	case 1:
 		//player2画像の読み込み
 		image = LoadGraph("Resource/images/car3.bmp");
 		carRimg = LoadGraph("Resource/images/OpenDoor2_R.png");
 		carLimg = LoadGraph("Resource/images/OpenDoor2_L.png");
 		doorRimg = LoadGraph("Resource/images/Door2_R.png");
 		doorLimg = LoadGraph("Resource/images/Door2_L.png");
-
-
+		break;
+	case 2:
+		//player3画像の読み込み
+		image = LoadGraph("Resource/images/car1.png");
+		carRimg = LoadGraph("Resource/images/OpenDoor3_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor3_L.png");
+		doorRimg = LoadGraph("Resource/images/Door3_R.png");
+		doorLimg = LoadGraph("Resource/images/Door3_L.png");
+		break;
+	case 3:
+		//player4画像の読み込み
+		image = LoadGraph("Resource/images/car4.png");
+		carRimg = LoadGraph("Resource/images/OpenDoor4_R.png");
+		carLimg = LoadGraph("Resource/images/OpenDoor4_L.png");
+		doorRimg = LoadGraph("Resource/images/Door4_R.png");
+		doorLimg = LoadGraph("Resource/images/Door4_L.png");
+		break;
+	default:
+		break;
 	}
+
+
 
 	LoadDivGraph("Resource/images/explosion.png", 3, 3, 1, 200, 200, explosion_img);
 
@@ -105,9 +131,13 @@ void Player::Update()
 	//hpの値をもらう
 	hpcheck = hp;
 
+	if (hp <= 0)
+	{
+		death_flg = true;
+	}
 
 	//操作不可状態であれば、自身を回転させる
-	if (!is_active)
+	if (!is_active && exNum <= 2)
 	{
 		if (sliponce == false)
 		{
@@ -117,11 +147,30 @@ void Player::Update()
 		}
 
 		location.y++;
+
 		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
 		angle += DX_PI_F / 24.0f;
 		speed = 1.0f;
+		if (hit_flg == true)
+		{
+			blinkingcun++;
+			switch (blinkingcun)
+			{
+			case(1):
+				blinking_flg = true;
+				break;
+			case(3):
+				blinking_flg = false;
+				break;
+			case(6):
+				blinkingcun = 0;
+				break;
+			default:
+				break;
+			}
+		}
 		if (angle >= DX_PI_F * 4.0f)
 		{
 			is_active = true;
@@ -192,6 +241,30 @@ void Player::Update()
 	DoorLlocation.y = location.y + 4;
 
 
+	if (hit_flg == true)
+	{
+		blinkingcun++;
+		switch (blinkingcun)
+		{
+		case(1):
+			blinking_flg = true;
+			break;
+		case(3):
+			blinking_flg = false;
+			break;
+		case(6):
+			blinkingcun = 0;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		blinkingcun = 0;
+		blinking_flg = false;
+	}
+
 	//透けるやつ
 	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
 	//爆発
@@ -203,94 +276,119 @@ void Player::Update()
 //描画処理
 void Player::Draw()
 {
-
-	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
-	//プレイヤー画像の描画
-	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
-
-	if (Attackflg == false && exNum < 2)
-	{
-		//プレイヤー画像の描画
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
-
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	}
-	else if (Attackflg == true && Bflg == true)
+	if (survival_flg == true)
 	{
 
-		//プレイヤー画像の描画（攻撃時）
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
-		// ドア描画
-		DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		//DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
+		////プレイヤー画像の描画
+		if (blinking_flg == true)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		}
+		else
+		{
+			DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+		}
+
+		if (Attackflg == false/* && exNum < 2*/)
+		{
+			
+			// 無敵時間中
+			if (blinking_flg == true)
+			{
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//点滅
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+			else
+			{
+				//プレイヤー画像の描画
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
+
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+
+		}
+		else if (Attackflg == true && Bflg == true)
+		{
+
+			// 無敵時間中
+			if (blinking_flg == true)
+			{
+
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+				
+			}
+			else
+			{
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
+				// ドア描画
+				DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+
+
+		}
+		else if (Attackflg == true && Xflg == true)
+		{
+
+			if (blinking_flg == true)
+			{
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+			else
+			{
+				//プレイヤー画像の描画（攻撃時）
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
+				// ドア描画
+				DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
+				//画像を透かす
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+				//体力表示 : ひび割れ
+				DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+				//画像透かし終わり
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+		}
 
 	}
-	else if (Attackflg == true && Xflg == true)
-	{
-		//プレイヤー画像の描画（攻撃時）
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
-		// ドア描画
-		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
-		//画像を透かす
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//体力表示 : ひび割れ
-		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
-		//画像透かし終わり
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	}
-
-	// 爆発アニメーションの描画
-	if (hp <= 0)
-	{
-		DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
-	}
-
-	//switch (playerd)
-	//{
-	//case 0:
-	//	//左下
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右");
-	//	break;
-	//case 1:
-	//	//右下
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "左！");
-	//	break;
-	//case 2:
-	//	//左上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "下！");
-	//	break;
-	//case 3:
-	//	//右上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "上！");
-	//	break;
-	//case 4:
-	//	//右上
-	//	DrawFormatString(location.x, location.y, GetColor(255, 255, 255), "右上");
-	//	break;
-	//default:
-	//	break;
-	//}
-	//DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
-	//DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
-	//攻撃のロケーション
-	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
-	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
-	//DrawFormatString(location.x, 300, GetColor(255, 255, 255), "DLx%f",DoorLlocation.x);
-	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
 
 
-	//DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
+		// 爆発アニメーションの描画
+		if (hp <= 0 && exNum <= 2)
+		{
+			DrawGraph(location.x - 100, location.y - 100, explosion_img[exNum], TRUE);
+		}
+
 }
 
 //終了処理
@@ -325,6 +423,16 @@ void Player::DecreaseHp(float value)
 bool Player::GetHitflg() const
 {
 	return this->hit_flg;
+}
+
+bool Player::GetSurvival_flg() const
+{
+	return this->survival_flg;;
+}
+
+bool Player::GetDeathFlg() const
+{
+	return this->death_flg;
 }
 
 void Player::Hitflg(bool flg)
@@ -626,6 +734,12 @@ void Player::Explosion()
 		break;
 	case(20):
 		exNum = 2;
+		survival_flg = false;
+		break;
+	case(80):
+		exNum = 1;
+	case(100):
+		exNum = 3;
 		StopSoundMem(explosion_sound);
 		break;
 	default:

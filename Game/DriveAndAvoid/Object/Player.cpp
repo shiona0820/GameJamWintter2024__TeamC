@@ -96,6 +96,7 @@ void Player::Update()
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active)
 	{
+		location.y++;
 		//Attackflg = false;
 		Bflg = false;
 		Xflg = false;
@@ -177,6 +178,8 @@ void Player::Draw()
 {
 
 	DrawCircle(DoorRlocation.x, DoorRlocation.y, 3, GetColor(255, 255, 0), TRUE);
+	//プレイヤー画像の描画
+	DrawRotaGraphF(location.x, location.y, 1.0, angle, image, TRUE);
 
 	if (Attackflg == false && exNum < 2)
 	{
@@ -198,6 +201,12 @@ void Player::Draw()
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, carRimg, TRUE);
 		// ドア描画
 		DrawRotaGraphF(location.x + 39, location.y - 2, 1.0, 5.2, doorRimg, TRUE);
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 	}
 	else if (Attackflg == true && Xflg == true)
@@ -206,6 +215,12 @@ void Player::Draw()
 		DrawRotaGraphF(location.x, location.y, 1.0, angle, carLimg, TRUE);
 		// ドア描画
 		DrawRotaGraphF(location.x - 39, location.y - 2, 1.0, -5.2, doorLimg, TRUE);
+		//画像を透かす
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//体力表示 : ひび割れ
+		DrawRotaGraphF(location.x, location.y, 1.0, angle, crackimg, TRUE);
+		//画像透かし終わり
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	// 爆発アニメーションの描画
@@ -239,8 +254,8 @@ void Player::Draw()
 	//default:
 	//	break;
 	//}
-	DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
-	DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
+	//DrawFormatString(location.x, 100, GetColor(255, 255, 255), "%f",location.x);
+	//DrawFormatString(location.x, 150, GetColor(255, 255, 255), "%f",location.y);
 	//攻撃のロケーション
 	//DrawFormatString(location.x, 200, GetColor(255, 255, 255), "DRx%f",DoorRlocation.x);
 	//DrawFormatString(location.x, 250, GetColor(255, 255, 255), "DRy%f",DoorRlocation.y);
@@ -248,7 +263,7 @@ void Player::Draw()
 	//DrawFormatString(location.x, 350, GetColor(255, 255, 255), "DLy%f",DoorLlocation.y);
 
 
-	DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
+	//DrawBoxAA(DoorLlocation.x, DoorLlocation.y, DoorLlocation.x + DoorL_size.x, DoorLlocation.y + DoorL_size.y, GetColor(255, 255, 255),TRUE);
 }
 
 //終了処理
@@ -361,6 +376,17 @@ int Player::GetBarriarCount() const
 bool Player::IsBarrier() const
 {
 	return (barrier != nullptr);
+
+}
+
+// ボタンフラグを取得
+int Player::GetBflg() const
+{
+	return this->Bflg;
+}
+int Player::GetXflg() const
+{
+	return this->Xflg;
 }
 
 
@@ -562,10 +588,13 @@ void Player::Explosion()
 	{
 	case(0):
 		exNum = 0;
+		break;
 	case(10):
 		exNum = 1;
+		break;
 	case(20):
 		exNum = 2;
+		break;
 	default:
 		break;
 	}

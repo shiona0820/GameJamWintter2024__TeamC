@@ -62,6 +62,18 @@ void Player::Initialize(int pnum,float x)
 	explosion_count = 0;
 	exNum = 0;
 
+	sliponce = false;
+
+	//SE,BGM
+	explosion_sound = LoadSoundMem("Resource/sound/explosion.mp3");
+	blow_sound = LoadSoundMem("Resource/sound/blow.mp3");
+	taiatari_sound = LoadSoundMem("Resource/sound/taiatari.mp3");
+	slip_sound = LoadSoundMem("Resource/sound/slip.mp3");
+	//音量設定
+	ChangeVolumeSoundMem(255, explosion_sound);
+	ChangeVolumeSoundMem(255, blow_sound);
+	ChangeVolumeSoundMem(255, taiatari_sound);
+
 	//画像の読み込み
 	switch (pnum)
 	{
@@ -127,6 +139,13 @@ void Player::Update()
 	//操作不可状態であれば、自身を回転させる
 	if (!is_active && exNum <= 2)
 	{
+		if (sliponce == false)
+		{
+			//スリップの音
+			PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
+			sliponce = true;
+		}
+
 		location.y++;
 
 		//Attackflg = false;
@@ -159,6 +178,11 @@ void Player::Update()
 		return;
 	}
 
+	if (CheckSoundMem(slip_sound) == false)
+	{
+		sliponce = false;
+	}
+
 	////燃料の消費
 	//fuel -= speed;
 	
@@ -177,7 +201,7 @@ void Player::Update()
 	//攻撃処理（右）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
 	{
-		//DoorRlocation.x = location.x + 25;
+		PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
 		//DoorRlocation.y = location.y + 4;
 		Attackflg = true;
 		Bflg = true;
@@ -187,6 +211,7 @@ void Player::Update()
 	//攻撃処理（左）
 	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
 	{
+		PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
 		//DoorLlocation.x = location.x - 55;
 		//DoorLlocation.y = location.y + 4;
 		Attackflg = true;
@@ -200,6 +225,7 @@ void Player::Update()
 		Acount++;
 		if (Acount >= 20)
 		{
+			//StopSoundMem(blow_sound);
 			Acount = 0;
 			Attackflg = false;
 			Bflg = false;
@@ -387,7 +413,7 @@ void Player::SetActive(bool flg)
 //体力減少処理
 void Player::DecreaseHp(float value)
 {
-
+	PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
 		hit_flg = true;
 		this->hp += value;
 		alpha += 42.5;
@@ -594,6 +620,10 @@ void Player::Acceleration()
 //ぶつかられた時の処理
 void Player::RepulsionX(Vector2D xy, Vector2D d)
 {
+
+	//車がぶつかるSE
+	PlaySoundMem(taiatari_sound, DX_PLAYTYPE_BACK, TRUE);
+
 	dire = direction;
 
 	//左右の判定
@@ -693,6 +723,7 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 void Player::Explosion()
 {
 	explosion_count++;
+	PlaySoundMem(explosion_sound, DX_PLAYTYPE_BACK, FALSE);
 	switch (explosion_count)
 	{
 	case(0):
@@ -709,6 +740,7 @@ void Player::Explosion()
 		exNum = 1;
 	case(100):
 		exNum = 3;
+		StopSoundMem(explosion_sound);
 		break;
 	default:
 		break;

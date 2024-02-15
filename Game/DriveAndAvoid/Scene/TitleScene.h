@@ -15,6 +15,11 @@ private:
 	int end_cun;
 	bool end;
 
+	int title_sound;   //タイトルBGM
+	int button_sound;  //ボタン移動SE
+	int buttonON_sound;      //ボタン決定SE
+	int buttonNO_sound;      //キャンセルボタンSE
+
 public:
 	TitleScene();
 	virtual ~TitleScene();

@@ -19,6 +19,11 @@ private:
 	int back_ground;    //”wŒi‰æ‘œ
 	int audience_img;	//ŠÏ‹q‰æ‘œ
 
+	int back_sound;        //ƒƒCƒ“BGM
+	int countdown_sound;   //ƒJƒEƒ“ƒgƒ_ƒEƒ“SE
+	int slip_sound;        //‘ÅŒ‚SE
+	int kansei_sound;		//‚©‚ñ‚¹‚¢BGM
+
 	int mileage;        //”wŒi‰æ‘œ‚ğ“®‚©‚·‚æ‚¤
 	int mileage2;        //ŠÏ‹q‰æ‘œ“®‚©‚·—p
 	int enemy_image[3]; //“G‰æ‘œ

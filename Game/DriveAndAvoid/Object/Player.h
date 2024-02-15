@@ -51,6 +51,13 @@ private:
 	int exNum;				// 爆発アニメーション描画用
 	int explosion_count;	// 爆発アニメーションカウント用
 
+	int explosion_sound;   //爆発SE
+	int blow_sound;        //打撃SE
+	int taiatari_sound;    //車同士のぶつかる時のSE
+	int slip_sound;        //物体にぶつかった時のSE
+
+	bool sliponce;
+
 public:
 	Player();
 	~Player();

@@ -22,6 +22,17 @@ void TitleScene::Initialize()
 	cursor_image = LoadGraph("Resource/images/cone.bmp");
 	end_image = LoadGraph("Resource/images/End.png");
 
+	//BGMの読み込み
+	title_sound = LoadSoundMem("Resource/sound/Roll_Crash.mp3");
+	button_sound = LoadSoundMem("Resource/sound/button.mp3");
+	buttonON_sound = LoadSoundMem("Resource/sound/buttonON.mp3");
+	buttonNO_sound = LoadSoundMem("Resource/sound/buttonNO.mp3");
+	//BGMの音量設定
+	ChangeVolumeSoundMem(255 * 80 / 150, title_sound);
+	ChangeVolumeSoundMem(255 * 80 / 100, button_sound);
+	ChangeVolumeSoundMem(255 * 80 / 100, buttonON_sound);
+	ChangeVolumeSoundMem(255 * 80 / 100, buttonNO_sound);
+
 	end_cun = 0;
 	end = false;
 
@@ -47,9 +58,20 @@ eSceneType TitleScene::Update()
 	if (end == false)
 	{
 
+
+		//bgmが流れていないときに再生
+		if (CheckSoundMem(title_sound) != TRUE)
+		{
+			PlaySoundMem(title_sound, DX_PLAYTYPE_BACK, TRUE);
+		}
+
+
+
 		//カーソル下移動
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_DPAD_DOWN, 0))
 		{
+			PlaySoundMem(button_sound, DX_PLAYTYPE_BACK, TRUE);
+
 			menu_cursor++;
 			//1番下に到達したら、１番上にする
 			if (menu_cursor > 3)
@@ -61,6 +83,8 @@ eSceneType TitleScene::Update()
 		//カーソル上移動
 		if (InputControl::GetButtonDown(XINPUT_BUTTON_DPAD_UP, 0))
 		{
+			PlaySoundMem(button_sound, DX_PLAYTYPE_BACK, TRUE);
+
 			menu_cursor--;
 			//1番上に到達したら、１番下にする
 			if (menu_cursor < 0)
@@ -75,8 +99,10 @@ eSceneType TitleScene::Update()
 			switch (menu_cursor)
 			{
 			case 0:
+				PlaySoundMem(buttonON_sound, DX_PLAYTYPE_BACK, TRUE);
 				return eSceneType::E_MAIN;
 			case 1:
+				PlaySoundMem(buttonON_sound, DX_PLAYTYPE_BACK, TRUE);
 				return eSceneType::E_HELP;
 			default:
 				end = true;
@@ -123,6 +149,9 @@ void TitleScene::Draw() const
 //終了処理
 void TitleScene::Finalize()
 {
+
+	
+
 	//読み込んだ画像の削除
 	DeleteGraph(background_image);
 	DeleteGraph(menu_image);

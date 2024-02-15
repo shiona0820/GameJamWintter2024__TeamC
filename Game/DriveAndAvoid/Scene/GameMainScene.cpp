@@ -3,9 +3,11 @@
 #include"DxLib.h"
 #include<math.h>
 
+int back_sound;
+
 int GameMainScene::Wineer=0;
 
-GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0),
+GameMainScene::GameMainScene() : high_score(0), back_ground(NULL),ptimer(0),ptimer2(0), back_sound(NULL),
 audience_img(NULL), mileage(0),mileage2(0), player(nullptr),player2(nullptr), enemy(nullptr),time(0),flg(false)
 {
 	for (int i = 0; i < 3; i++)
@@ -34,6 +36,33 @@ void GameMainScene::Initialize()
 	blackimg = LoadGraph("Resource/images/black.png");
 	starimg = LoadGraph("Resource/images/star.png");
 	LoadDivGraph("Resource/images/123.png", 3, 3, 1, 128, 128, number_img);
+
+
+	//BGMの読み込み
+	back_sound = LoadSoundMem("Resource/sound/BGM1.mp3");
+	countdown_sound = LoadSoundMem("Resource/sound/countdown.mp3");
+	slip_sound = LoadSoundMem("Resource/sound/slip,kkj.mp3");
+	kansei_sound = LoadSoundMem("Resource/sound/studiam.mp3");
+
+	
+	
+	//BGMの音量設定
+	ChangeVolumeSoundMem(255 * 50 / 100, back_sound);
+	ChangeVolumeSoundMem(255 * 50 / 100, kansei_sound);
+	ChangeVolumeSoundMem(255 * 100 / 100, countdown_sound);
+	ChangeVolumeSoundMem(255 * 100 / 150, slip_sound);
+	
+	
+	////BGMのエラーチェック
+	//if (back_sound == -1)
+	//{
+	//	throw("Resource/sound/BGM1.MP3がありません");
+	//}
+	//if (countdown_sound == -1)
+	//{
+	//	throw("Resource/sound/カウントダウン３がありません");
+	//}
+
 
 	//エラーチェック
 	if (back_ground == -1)
@@ -111,6 +140,8 @@ eSceneType GameMainScene::Update()
 
 		if (startflg == false)
 		{
+			//カウントダウンSE
+			PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, FALSE);
 
 			// カウントダウン後にゲーム開始
 			starttimer++;
@@ -148,6 +179,10 @@ eSceneType GameMainScene::Update()
 			{
 				checkhum();
 			}
+			//メインBGM
+			PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
+			PlaySoundMem(kansei_sound, DX_PLAYTYPE_LOOP, FALSE);
+
 
 			//プレイヤーの更新
 			player->Update();
@@ -679,7 +714,7 @@ eSceneType GameMainScene::Update()
 				item[i]->Hitflg(true);
 			}
 		}
-
+		
 		//プレイヤーの燃料か体力が０未満なら、リザルトに遷移する
 /*	if (player->GetFuel() < 0.0f || player->GetHp() < 0.0f)
 	{

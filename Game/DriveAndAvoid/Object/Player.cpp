@@ -707,7 +707,7 @@ void Player::Explosion()
 		break;
 	case(80):
 		exNum = 1;
-	case(90):
+	case(100):
 		exNum = 3;
 		break;
 	default:

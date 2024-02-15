@@ -83,7 +83,7 @@ eSceneType TitleScene::Update()
 void TitleScene::Draw() const
 {
 	//タイトル画面の描画
-	DrawGraph(0, 0, background_image, FALSE);
+	DrawExtendGraph(0, 0, 1280, 720, background_image, FALSE);
 
 	//メニュー画面の描画
 	DrawGraph(150, 300, menu_image, TRUE);

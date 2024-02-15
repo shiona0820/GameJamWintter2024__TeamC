@@ -7,6 +7,9 @@ class HelpScene:public SceneBase
 private:
 	int help_image;      //背景画像
 
+	int buttonNO_sound;      //キャンセルボタンSE
+
+
 public:
 	HelpScene();
 	virtual ~HelpScene();

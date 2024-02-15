@@ -71,6 +71,7 @@ public:
 	void SetActive(bool flg);          //有効フラグ設定
 	void DecreaseHp(float value);       //体力減少処理
 	void Hitflg(bool flg);//攻撃が当たってない状態かをもらう
+	void deathset(float x);
 	Vector2D GetLocation() const;   //位置情報取得
 	Vector2D GetDirection() const;   //向き情報取得
 	Vector2D GetBoxSize() const;    //当たり判定の大きさ取得
@@ -91,9 +92,10 @@ public:
 
 	int GetAttackflg() const;//アタックフラグを返す
 
+	
+
 	//void direction(Vector2D xy);			//どこに当たったか調べる
 	void RepulsionX(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用左右
-	void RepulsionY(Vector2D xy,Vector2D d);//ぶつかったら反発起こす用上下
 	//相手のロケーションと向きをもらう
 
 	//自分の車に侵入できなくする

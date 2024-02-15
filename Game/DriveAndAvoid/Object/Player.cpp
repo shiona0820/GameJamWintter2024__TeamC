@@ -128,31 +128,124 @@ void Player::Initialize(int pnum,float x)
 //更新処理
 void Player::Update()
 {
-	//hpの値をもらう
-	hpcheck = hp;
-
-	if (hp <= 0)
+	if (survival_flg == true)
 	{
-		death_flg = true;
-	}
 
-	//操作不可状態であれば、自身を回転させる
-	if (!is_active && exNum <= 2)
-	{
-		if (sliponce == false)
+
+		//hpの値をもらう
+		hpcheck = hp;
+
+		if (hp <= 0)
 		{
-			//スリップの音
-			PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
-			sliponce = true;
+			death_flg = true;
 		}
 
-		location.y++;
+		//操作不可状態であれば、自身を回転させる
+		if (!is_active && exNum <= 2)
+		{
+			if (sliponce == false)
+			{
+					//スリップの音
+					PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
+					sliponce = true;
+				
+			}
 
-		//Attackflg = false;
-		Bflg = false;
-		Xflg = false;
-		angle += DX_PI_F / 24.0f;
-		speed = 1.0f;
+			location.y++;
+
+			//Attackflg = false;
+			Bflg = false;
+			Xflg = false;
+			angle += DX_PI_F / 24.0f;
+			speed = 1.0f;
+			if (hit_flg == true)
+			{
+				blinkingcun++;
+				switch (blinkingcun)
+				{
+				case(1):
+					blinking_flg = true;
+					break;
+				case(3):
+					blinking_flg = false;
+					break;
+				case(6):
+					blinkingcun = 0;
+					break;
+				default:
+					break;
+				}
+			}
+			if (angle >= DX_PI_F * 4.0f)
+			{
+				is_active = true;
+			}
+			return;
+		}
+
+		if (CheckSoundMem(slip_sound) == false)
+		{
+			sliponce = false;
+		}
+
+		////燃料の消費
+		//fuel -= speed;
+
+
+		//移動処理
+		Movement();
+
+		//加減速処理
+		Acceleration();
+
+		if (InputControl::GetButtonDown(XINPUT_BUTTON_START, playernum))
+		{
+			is_active = false;
+		}
+
+		//攻撃処理（右）
+		if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
+		{
+			PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
+			//DoorRlocation.y = location.y + 4;
+			Attackflg = true;
+			Bflg = true;
+			Acount = 0;
+		}
+
+		//攻撃処理（左）
+		if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
+		{
+			PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
+			//DoorLlocation.x = location.x - 55;
+			//DoorLlocation.y = location.y + 4;
+			Attackflg = true;
+			Xflg = true;
+			Acount = 0;
+		}
+
+		// 少ししたらドアを閉じる
+		if (Attackflg == true)
+		{
+			Acount++;
+			if (Acount >= 20)
+			{
+				//StopSoundMem(blow_sound);
+				Acount = 0;
+				Attackflg = false;
+				Bflg = false;
+				Xflg = false;
+
+			}
+		}
+
+
+		DoorRlocation.x = location.x + 25;
+		DoorRlocation.y = location.y + 4;
+		DoorLlocation.x = location.x - 55;
+		DoorLlocation.y = location.y + 4;
+
+
 		if (hit_flg == true)
 		{
 			blinkingcun++;
@@ -171,106 +264,13 @@ void Player::Update()
 				break;
 			}
 		}
-		if (angle >= DX_PI_F * 4.0f)
+		else
 		{
-			is_active = true;
-		}
-		return;
-	}
-
-	if (CheckSoundMem(slip_sound) == false)
-	{
-		sliponce = false;
-	}
-
-	////燃料の消費
-	//fuel -= speed;
-	
-
-	//移動処理
-	Movement();
-	
-	//加減速処理
-	Acceleration();
-
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_START,playernum))
-	{
-		is_active = false;
-	}
-
-	//攻撃処理（右）
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_B, playernum) && Attackflg == false)
-	{
-		PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
-		//DoorRlocation.y = location.y + 4;
-		Attackflg = true;
-		Bflg = true;
-		Acount = 0;
-	}
-
-	//攻撃処理（左）
-	if (InputControl::GetButtonDown(XINPUT_BUTTON_X, playernum) && Attackflg == false)
-	{
-		PlaySoundMem(blow_sound, DX_PLAYTYPE_BACK, TRUE);
-		//DoorLlocation.x = location.x - 55;
-		//DoorLlocation.y = location.y + 4;
-		Attackflg = true;
-		Xflg = true;
-		Acount = 0;
-	}
-
-	// 少ししたらドアを閉じる
-	if (Attackflg == true)
-	{
-		Acount++;
-		if (Acount >= 20)
-		{
-			//StopSoundMem(blow_sound);
-			Acount = 0;
-			Attackflg = false;
-			Bflg = false;
-			Xflg = false;
-
-		}
-	}
-
-
-	DoorRlocation.x = location.x + 25;
-	DoorRlocation.y = location.y + 4;
-	DoorLlocation.x = location.x - 55;
-	DoorLlocation.y = location.y + 4;
-
-
-	if (hit_flg == true)
-	{
-		blinkingcun++;
-		switch (blinkingcun)
-		{
-		case(1):
-			blinking_flg = true;
-			break;
-		case(3):
-			blinking_flg = false;
-			break;
-		case(6):
 			blinkingcun = 0;
-			break;
-		default:
-			break;
+			blinking_flg = false;
 		}
+
 	}
-	else
-	{
-		blinkingcun = 0;
-		blinking_flg = false;
-	}
-
-	//透けるやつ
-	//変数アルファを体力ごとに濃ゆさ変えてマックスまで濃ゆくなった後もう一度食らったら
-	//爆発
-	//攻撃くらったらHP減る関数とHPの変数を作る
-
-
 }
 
 //描画処理
@@ -410,10 +410,18 @@ void Player::SetActive(bool flg)
 	this->is_active = flg;
 }
 
+void Player::deathset(float x)
+{
+	this->location.x = x;
+}
+
 //体力減少処理
 void Player::DecreaseHp(float value)
 {
-	PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
+	//if (CheckSoundMem(slip_sound) == false)
+	//{
+	//	PlaySoundMem(slip_sound, DX_PLAYTYPE_BACK, TRUE);
+	//}
 		hit_flg = true;
 		this->hp += value;
 		alpha += 42.5;
@@ -427,7 +435,7 @@ bool Player::GetHitflg() const
 
 bool Player::GetSurvival_flg() const
 {
-	return this->survival_flg;;
+	return this->survival_flg;
 }
 
 bool Player::GetDeathFlg() const
@@ -620,9 +628,11 @@ void Player::Acceleration()
 //ぶつかられた時の処理
 void Player::RepulsionX(Vector2D xy, Vector2D d)
 {
-
-	//車がぶつかるSE
-	PlaySoundMem(taiatari_sound, DX_PLAYTYPE_BACK, TRUE);
+	if (CheckSoundMem(taiatari_sound) == false)
+	{
+		//車がぶつかるSE
+		PlaySoundMem(taiatari_sound, DX_PLAYTYPE_BACK, TRUE);
+	}
 
 	dire = direction;
 
@@ -723,7 +733,10 @@ void Player::RepulsionX(Vector2D xy, Vector2D d)
 void Player::Explosion()
 {
 	explosion_count++;
-	PlaySoundMem(explosion_sound, DX_PLAYTYPE_BACK, FALSE);
+	if (CheckSoundMem(explosion_sound) == false)
+	{
+		PlaySoundMem(explosion_sound, DX_PLAYTYPE_BACK, FALSE);
+	}
 	switch (explosion_count)
 	{
 	case(0):

@@ -6,7 +6,8 @@ class ResultScene : public SceneBase
 {
 private:
 	int back_ground;        //”wŒi‰æ‘œ
-	
+	int se;
+	int se1;
 
 public:
 	ResultScene();

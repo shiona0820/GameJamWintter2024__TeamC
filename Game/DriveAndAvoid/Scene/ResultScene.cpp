@@ -37,6 +37,10 @@ void ResultScene::Initialize()
 	}
 
 
+	se = LoadSoundMem("Resource/sound/スタジアムの歓声.mp3");
+	se1 = LoadSoundMem("Resource/sound/試合終了のゴング.mp3");
+
+
 	//エラーチェック
 	if (back_ground == -1)
 	{
@@ -78,6 +82,17 @@ void ResultScene::Draw() const
 	default:
 		break;
 	}
+	if(CheckSoundMem(se)==false)
+		{
+		PlaySoundMem(se, DX_PLAYTYPE_BACK, TRUE);
+
+	}
+	if (CheckSoundMem(se) == false)
+	{
+		PlaySoundMem(se1, DX_PLAYTYPE_BACK, TRUE);
+
+	}
+
 }
 
 //終了時処理
@@ -85,6 +100,8 @@ void ResultScene::Finalize()
 {
 	//読み込んだ画像を削除
 	DeleteGraph(back_ground);
+	DeleteSoundMem(se);
+	DeleteSoundMem(se1);
 }
 
 //現在のシーン情報を取得

@@ -47,7 +47,7 @@ void GameMainScene::Initialize()
 	
 	
 	//BGMの音量設定
-	ChangeVolumeSoundMem(255 * 50 / 100, back_sound);
+	ChangeVolumeSoundMem(100, back_sound);
 	ChangeVolumeSoundMem(255 * 50 / 100, kansei_sound);
 	ChangeVolumeSoundMem(255 * 100 / 100, countdown_sound);
 	ChangeVolumeSoundMem(255 * 100 / 150, slip_sound);
@@ -130,6 +130,7 @@ void GameMainScene::Initialize()
 	p4win = 0;
 	whowin = 0;
 	wFlg = false;
+	seflg = false;
 }
 
 //更新処理
@@ -140,8 +141,12 @@ eSceneType GameMainScene::Update()
 
 		if (startflg == false)
 		{
-			//カウントダウンSE
-			PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, FALSE);
+			if (seflg == false)
+			{
+				seflg = true;
+				//カウントダウンSE
+				PlaySoundMem(countdown_sound, DX_PLAYTYPE_BACK, FALSE);
+			}
 
 			// カウントダウン後にゲーム開始
 			starttimer++;
@@ -168,6 +173,7 @@ eSceneType GameMainScene::Update()
 		}
 		else
 		{
+			seflg = false;
 
 			//三回分の勝ち負けを記録する
 			//プレイヤー１か２が死んだ場合
@@ -182,7 +188,6 @@ eSceneType GameMainScene::Update()
 			//メインBGM
 			PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
 			PlaySoundMem(kansei_sound, DX_PLAYTYPE_LOOP, FALSE);
-
 
 			//プレイヤーの更新
 			player->Update();
@@ -201,6 +206,25 @@ eSceneType GameMainScene::Update()
 					item[i]->Update();
 				}
 			}
+
+
+			if (player->GetSurvival_flg() == false)
+			{
+				player->deathset(100000);
+			}
+			if (player2->GetSurvival_flg() == false)
+			{
+				player2->deathset(100000);
+			}
+			if (player3->GetSurvival_flg() == false)
+			{
+				player3->deathset(100000);
+			}
+			if (player4->GetSurvival_flg() == false)
+			{
+				player4->deathset(100000);
+			}
+
 
 			//移動距離の更新
 			mileage += 15;
@@ -256,7 +280,6 @@ eSceneType GameMainScene::Update()
 
 
 			//当たり判定の確認
-		//当たり判定の確認（プレイヤーとパトカー）
 			if (IsHitCheckPlayer(player, player2))
 			{
 
@@ -755,6 +778,10 @@ eSceneType GameMainScene::Update()
 
 		if (endcount > 200)
 		{
+			DeleteSoundMem(back_sound);
+			DeleteSoundMem(kansei_sound);
+			DeleteSoundMem(kansei_sound);
+			DeleteSoundMem(slip_sound);
 			return eSceneType::E_RESULT;
 		}
 	}
@@ -910,6 +937,8 @@ void GameMainScene::Finalize()
 
 void GameMainScene::win()
 {
+
+
 	if (winflg == false)
 	{
 		//三回分の勝ち負けを記録する

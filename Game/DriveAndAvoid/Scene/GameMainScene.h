@@ -64,6 +64,8 @@ private:
 	int howmany;
 	bool wFlg;//ŠÖ”win‰ğ‚µ‚æ‚¤
 
+	bool seflg;
+
 public:
 	int static Wineer;
 

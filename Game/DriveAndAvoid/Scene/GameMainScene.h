@@ -22,6 +22,7 @@ private:
 	int back_sound;        //メインBGM
 	int countdown_sound;   //カウントダウンSE
 	int slip_sound;        //打撃SE
+	int kansei_sound;		//かんせいBGM
 
 	int mileage;        //背景画像を動かすよう
 	int mileage2;        //観客画像動かす用

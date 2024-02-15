@@ -42,11 +42,13 @@ void GameMainScene::Initialize()
 	back_sound = LoadSoundMem("Resource/sound/BGM1.mp3");
 	countdown_sound = LoadSoundMem("Resource/sound/countdown.mp3");
 	slip_sound = LoadSoundMem("Resource/sound/slip,kkj.mp3");
+	kansei_sound = LoadSoundMem("Resource/sound/studiam.mp3");
 
 	
 	
 	//BGMの音量設定
 	ChangeVolumeSoundMem(255 * 50 / 100, back_sound);
+	ChangeVolumeSoundMem(255 * 50 / 100, kansei_sound);
 	ChangeVolumeSoundMem(255 * 100 / 100, countdown_sound);
 	ChangeVolumeSoundMem(255 * 100 / 150, slip_sound);
 	
@@ -179,6 +181,7 @@ eSceneType GameMainScene::Update()
 			}
 			//メインBGM
 			PlaySoundMem(back_sound, DX_PLAYTYPE_LOOP, FALSE);
+			PlaySoundMem(kansei_sound, DX_PLAYTYPE_LOOP, FALSE);
 
 
 			//プレイヤーの更新

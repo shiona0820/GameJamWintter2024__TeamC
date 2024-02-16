@@ -136,8 +136,17 @@ void Player::Initialize(int pnum,float x)
 //XVˆ—
 void Player::Update()
 {
+
+	if (InputControl::GetButtonDown(XINPUT_BUTTON_Y, playernum))
+	{
+		hp = -1;
+	}
+	
+
 	if (survival_flg == true)
 	{
+
+
 
 
 		//hp‚Ì’l‚ğ‚à‚ç‚¤
@@ -447,6 +456,8 @@ void Player::Finalize()
 	{
 		delete barrier;
 	}
+
+	DeleteSoundMem(serif_sound);
 }
 
 //ó‘Ôİ’èˆ—

@@ -767,7 +767,7 @@ eSceneType GameMainScene::Update()
 		}
 
 
-		if (p2win > 2 || p1win > 2 || p3win > 2 || p4win > 2)
+		if (p2win >= 3 || p1win >=3 || p3win >= 3 || p4win >= 3)
 		{
 			endflg = true;
 		}
@@ -986,9 +986,21 @@ void GameMainScene::win()
 		alpha+=2;
 	}
 
-	if (p1win < 2 || p2win < 2||p3win<2 || p4win<2)
+	if (p1win <= 3 || p2win <=3||p3win<=3 || p4win<=3)
 	{
 		if (alpha > 400) {
+
+			delete player;
+			delete player2;
+			delete player3;
+			delete player4;
+
+			//オブジェクトの生成
+			player = new Player;
+			player2 = new Player;
+			player3 = new Player;
+			player4 = new Player;
+
 
 			//オブジェクトの初期化
 			player->Initialize(0, 1000);

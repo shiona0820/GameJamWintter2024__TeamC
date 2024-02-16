@@ -98,6 +98,8 @@ void ResultScene::Draw() const
 //I—¹ˆ—
 void ResultScene::Finalize()
 {
+	DeleteSoundMem(se);
+	DeleteSoundMem(se1);
 	//“Ç‚İ‚ñ‚¾‰æ‘œ‚ğíœ
 	DeleteGraph(back_ground);
 	DeleteSoundMem(se);

@@ -111,6 +111,8 @@ void Player::Initialize(int pnum,float x)
 		break;
 	default:
 		break;
+
+		StopSoundMem(serif_sound);
 	}
 
 	serif = LoadGraph("Resource/images/serif.png");
@@ -143,6 +145,7 @@ void Player::Update()
 
 		if (hp <= 0)
 		{
+			serifFlg = false;
 			death_flg = true;
 		}
 
@@ -421,7 +424,7 @@ void Player::Draw()
 	
 		
 	}
-	else
+	else if(serifFlg==false)
 	{
 		StopSoundMem(serif_sound);
 	}
@@ -602,7 +605,20 @@ void Player::Movement()
 		direction = Vector2D(0.0f, 1.0f);
 	}
 
-	location += direction*2;
+
+		//観客のところに入ったらスピードが減る右
+	if ((location.x < 120) || (location.x >= 1160.0f))
+	{
+		location += direction/2;
+		serifFlg = true;
+	}
+	else
+	{
+		serifcount = 0;
+		location += direction * 2;
+
+		serifFlg = false;
+	}
 
 
 	if (location.x >= 1280)
@@ -610,18 +626,7 @@ void Player::Movement()
 		location.x = 1280;
 	}
 
-	//観客のところに入ったらスピードが減る右
-	if ((location.x < 120) || (location.x >= 1160.0f))
-	{
-		location -= direction;
-		serifFlg = true;
-	}
-	else
-	{
-		serifcount = 0;
 
-		serifFlg = false;
-	}
 
 	//画面外に出ないように
 	if (location.x < 0)

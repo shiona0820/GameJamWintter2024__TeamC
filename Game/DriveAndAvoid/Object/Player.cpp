@@ -73,6 +73,7 @@ void Player::Initialize(int pnum,float x)
 	ChangeVolumeSoundMem(255, explosion_sound);
 	ChangeVolumeSoundMem(255, blow_sound);
 	ChangeVolumeSoundMem(255, taiatari_sound);
+	ChangeVolumeSoundMem(255, taiatari_sound);
 
 	//画像の読み込み
 	switch (pnum)
@@ -114,6 +115,8 @@ void Player::Initialize(int pnum,float x)
 
 	serif = LoadGraph("Resource/images/serif.png");
 	serif2 = LoadGraph("Resource/images/serif2.png");
+	serif_sound= LoadSoundMem("Resource/sound/黄色い悲鳴.mp3");
+
 	serifFlg = false;
 	serifcount = 0;
 
@@ -394,6 +397,9 @@ void Player::Draw()
 
 	if (serifFlg==true)
 	{
+
+		PlaySoundMem(serif_sound,DX_PLAYTYPE_LOOP, FALSE);
+
 		//悲鳴つける
 		if (serifcount < 50)
 		{
@@ -414,6 +420,10 @@ void Player::Draw()
 
 	
 		
+	}
+	else
+	{
+		StopSoundMem(serif_sound);
 	}
 		// 爆発アニメーションの描画
 		if (hp <= 0 && exNum <= 2)

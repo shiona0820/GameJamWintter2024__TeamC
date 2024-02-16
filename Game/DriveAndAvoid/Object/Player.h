@@ -63,6 +63,7 @@ private:
 
 	bool serifFlg;//ŠÏ‹q‚Ì‚Æ‚±‚ë‚É“ü‚Á‚½‚ç
 	int serifcount;
+	int serif_sound;
 
 public:
 	Player();
